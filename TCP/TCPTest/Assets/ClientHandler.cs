@@ -17,7 +17,9 @@ public class ClientHandler : MonoBehaviour
     private void Awake() {
         _mh.AddClientMessageSelfListener(LogSelf);
         _mh.AddClientMessageSentListener(LogSent);
+        _mh.AddClientStringSentListener(LogSent);
         _mh.AddClientMessageReceivedListener(LogReceived);
+        _mh.AddClientStringReceivedListener(LogReceived);
 
         Log("Klientlogg, nya inlägg överst");
 
@@ -64,8 +66,16 @@ public class ClientHandler : MonoBehaviour
         Log("Skickat: " + JsonUtility.ToJson(msg), Color.blue);
     }
 
+    private void LogSent(string str) {
+        Log("Skickat: " + str, Color.blue);
+    }
+
     private void LogReceived(JsonMessage msg) {
         Log("Mottaget: " + JsonUtility.ToJson(msg), new Color(0.6f, 0f, 0.3f));
+    }
+
+    private void LogReceived(string str) {
+        Log("Mottaget: " + str, new Color(0.6f, 0f, 0.3f));
     }
     #endregion
 

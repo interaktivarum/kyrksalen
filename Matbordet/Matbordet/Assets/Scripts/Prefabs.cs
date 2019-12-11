@@ -8,7 +8,7 @@ public class Prefabs : MonoBehaviour
     void Start()
     {
         foreach (Transform child in transform) {
-            child.gameObject.SetActive(false);
+            //child.gameObject.SetActive(false);
         }
     }
 

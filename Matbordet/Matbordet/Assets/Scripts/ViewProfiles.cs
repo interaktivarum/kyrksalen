@@ -43,9 +43,10 @@ public class ViewProfiles : MonoBehaviour
                         viewMenu.GetComponent<ViewMenu>().SetCourses(pScript.courses);
 
                         //Send server message
-                        _mh.SendMessageToServer(new JsonMessage("ChildSelected") {
+                        /*_mh.SendMessageToServer(new JsonMessage("ChildSelected") {
                             args = "{\"id\": \"" + pScript.serverName + "\"}"
-                        });
+                        });*/
+                        _mh.SendStringToServer("ChildSelected" + pScript.serverName);
                     }
                     else {
                         pScript.Disappear();

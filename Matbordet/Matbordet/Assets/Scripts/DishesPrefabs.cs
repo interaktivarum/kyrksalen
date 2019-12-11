@@ -7,9 +7,9 @@ public class DishesPrefabs : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        /*foreach(Transform child in transform) {
-            child.gameObject.SetActive(false);
-        }*/
+        foreach(Transform child in transform) {
+            //child.gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame

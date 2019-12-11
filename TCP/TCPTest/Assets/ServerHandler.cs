@@ -23,6 +23,8 @@ public class ServerHandler : MonoBehaviour {
         _mh.AddServerMessageSelfListener(LogSelf);
         _mh.AddServerMessageSentListener(LogSent);
         _mh.AddServerMessageReceivedListener(LogReceived);
+        _mh.AddServerStringSentListener(LogSent);
+        _mh.AddServerStringReceivedListener(LogReceived);
 
         ClearCustomMessage();
 
@@ -45,13 +47,17 @@ public class ServerHandler : MonoBehaviour {
     }
 
     public void SendCustomMessage() {
-        _mh.SendMessageToClient(JsonUtility.FromJson<JsonMessage>(customMessage.text));
+        _mh.SendStringToClient(customMessage.text);
     }
 
     public void ClearCustomMessage() {
         customMessage.text = JsonUtility.ToJson(new JsonMessage {
             cbStr = "RandomizeColors"
         });
+    }
+
+    public void ClearCustomString() {
+        customMessage.text = "RandomizeColors";
     }
 
     //Custom Log
@@ -87,8 +93,16 @@ public class ServerHandler : MonoBehaviour {
         Log("Skickat: " + JsonUtility.ToJson(msg), Color.blue);
     }
 
+    private void LogSent(string str) {
+        Log("Skickat: " + str, Color.blue);
+    }
+
     private void LogReceived(JsonMessage msg) {
         Log("Mottaget: " + JsonUtility.ToJson(msg), new Color(0.6f,0f,0.3f));
+    }
+
+    private void LogReceived(string str) {
+        Log("Mottaget: " + str, new Color(0.6f, 0f, 0.3f));
     }
     #endregion
 

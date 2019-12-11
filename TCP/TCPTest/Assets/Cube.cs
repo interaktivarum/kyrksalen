@@ -33,8 +33,8 @@ public class Cube : MonoBehaviour
             ipmh.SendMessageToServer(msg, RandomizeColors);
         }
         else if (Input.GetMouseButtonDown(1)) {
-            JsonMessage msg = new JsonMessage("MouseButtonRight");
-            ipmh.SendMessageToServer(msg);
+            ipmh.SendStringToServer("Two");
+            ipmh.SendStringToServer("Clicks");
         }
     }
 

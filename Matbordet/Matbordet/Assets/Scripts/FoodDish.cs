@@ -9,22 +9,25 @@ public class FoodDish : MonoBehaviour
     public string dishName;
     public string serverName;
     private Sprite _sprite;
-    private Vector2 _ul;
-    private Vector2 _br;
+    private Vector2 _bl;
+    private Vector2 _ur;
     private Vector2 _pixelSize;
     private Vector2 _scale;
+    private Vector2 _initScale;
 
     private void Awake() {
-        SetSprite();
     }
 
     // Start is called before the first frame update
     void Start()
-    {        
+    {
+        _initScale = transform.localScale;
+        //SetSprite();
     }
 
     private void OnEnable() {
         //Appear();
+        
     }
 
     // Update is called once per frame
@@ -32,28 +35,40 @@ public class FoodDish : MonoBehaviour
     {
     }
 
-    void SetSprite () {
+    private void OnMouseDown() {
+        Debug.Log(dishName);
+        GetComponentInParent<ViewMenu>().DishHit(this);
+    }
+
+    /*void SetSprite () {
 
         _sprite = GetComponentInChildren<SpriteRenderer>().sprite;
 
         Bounds br = gameObject.GetComponentInChildren<SpriteRenderer>().bounds;
         //Debug.Log("Renderer bounds: " + br);
 
-        Vector3 ulb = new Vector3(br.center.x - br.extents.x, br.center.y + br.extents.y, 0);
-        _ul = Camera.main.WorldToScreenPoint(ulb);
+        Vector3 blb = new Vector3(br.center.x - br.extents.x, br.center.y - br.extents.y, 0);
+        _bl = Camera.main.WorldToScreenPoint(blb);
 
-        Vector3 brb = new Vector3(br.center.x + br.extents.x, br.center.y - br.extents.y, 0);
-        _br = Camera.main.WorldToScreenPoint(brb);
+        Vector3 urb = new Vector3(br.center.x + br.extents.x, br.center.y + br.extents.y, 0);
+        _ur = Camera.main.WorldToScreenPoint(urb);
 
-        _pixelSize = new Vector2(_br.x - _ul.x, _ul.y - _br.y);
+        _pixelSize = _ur - _bl;
         //Debug.Log("Pixel size: " + _pixelSize);
 
         _scale = _pixelSize / _sprite.rect.size;
         //Debug.Log("Scale: " + _scale);
-    }
 
-    public bool HitTest() {
-        //Debug.Log("Click: " + dishName);       
+        Debug.Log(dishName);
+        Debug.Log(_bl);
+        Debug.Log(_ur);
+        Debug.Log(_pixelSize);
+        Debug.Log(_sprite.rect.size);
+    }*/
+
+    //public bool HitTest() {
+        /*
+        //Debug.Log("Click: " + dishName);      
 
         //Debug.Log("Screen click: " + Input.mousePosition);
 
@@ -67,26 +82,36 @@ public class FoodDish : MonoBehaviour
         //Debug.Log(color);
 
         return color.a != 0;
-    }
+        */
 
-    public void Appear() {       
-        transform.Rotate(0, 180, 180);
-        Vector3 initScale = transform.localScale;
+        /*
+        Vector2 mouse = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+
+        return mouse.x > _bl.x && mouse.y > _bl.y && mouse.x < _ur.x && mouse.y < _ur.y;
+        */
+
+    //}
+
+    public void Appear() {
+        transform.localRotation = new Quaternion(0, 180, 180, 0);
         transform.localScale = new Vector3();
         transform.DORotate(new Vector3(), 1f);
-        Tween myTween = transform.DOScale(initScale, 1f);
+        Tween myTween = transform.DOScale(new Vector3(1,1,1), 1f);
     }
 
-    public void Disappear() {
+    public YieldInstruction Disappear() {
         transform.DORotate(new Vector3(0, 180, 180), 1f);
         Tween myTween = transform.DOScale(new Vector3(), 1f);
-        myTween.OnComplete(() => Destroy(gameObject));
+        //myTween.OnComplete(() => Destroy(gameObject));
+        //myTween.WaitForCompletion()
+        myTween.OnComplete(() => gameObject.SetActive(false));
+        return myTween.WaitForCompletion();
     }
 
     public void Choose() {
         transform.DORotate(new Vector3(0, 0, 10), 1f);
         Tween myTween = transform.DOScale(transform.localScale * 1.25f, 1f);
-        myTween.OnComplete(Disappear);
+        //myTween.OnComplete(Disappear);
     }
 
 }

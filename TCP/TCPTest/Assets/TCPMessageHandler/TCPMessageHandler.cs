@@ -41,6 +41,7 @@ public class TCPMessageHandler : MonoBehaviour
     Client _client;
     Server _server;
     IPSettings settings;
+    public char separator = ' ';
 
     public delegate void CallbackDelegate(string msg); // This defines what type of method you're going to call.
 
@@ -49,10 +50,14 @@ public class TCPMessageHandler : MonoBehaviour
 
     public StrEvent _ClientMessageSelfEvent = new StrEvent();
     public MsgEvent _ClientMessageSentEvent = new MsgEvent();
+    public StrEvent _ClientStringSentEvent = new StrEvent();
     public MsgEvent _ClientMessageReceivedEvent = new MsgEvent();
+    public StrEvent _ClientStringReceivedEvent = new StrEvent();
     public StrEvent _ServerMessageSelfEvent = new StrEvent();
     public MsgEvent _ServerMessageSentEvent = new MsgEvent();
+    public StrEvent _ServerStringSentEvent = new StrEvent();
     public MsgEvent _ServerMessageReceivedEvent = new MsgEvent();
+    public StrEvent _ServerStringReceivedEvent = new StrEvent();
 
     private void Awake() {
         SettingsFromJSON();
@@ -86,7 +91,8 @@ public class TCPMessageHandler : MonoBehaviour
             }
             else {
                 _ClientMessageSelfEvent.Invoke("Handler: Ping server");
-                SendMessageToServer(new JsonMessage("ping"));
+                //SendMessageToServer(new JsonMessage("ping"));
+                SendStringToServer("ping");
             }
             yield return new WaitForSeconds(10);
         }
@@ -104,8 +110,16 @@ public class TCPMessageHandler : MonoBehaviour
         _ClientMessageSentEvent.AddListener(call);
     }
 
+    public void AddClientStringSentListener(UnityAction<string> call) {
+        _ClientStringSentEvent.AddListener(call);
+    }
+
     public void AddClientMessageReceivedListener(UnityAction<JsonMessage> call) {
         _ClientMessageReceivedEvent.AddListener(call);
+    }
+
+    public void AddClientStringReceivedListener(UnityAction<string> call) {
+        _ClientStringReceivedEvent.AddListener(call);
     }
 
     public void AddServerMessageSelfListener(UnityAction<string> call) {
@@ -116,8 +130,16 @@ public class TCPMessageHandler : MonoBehaviour
         _ServerMessageSentEvent.AddListener(call);
     }
 
+    public void AddServerStringSentListener(UnityAction<string> call) {
+        _ServerStringSentEvent.AddListener(call);
+    }
+
     public void AddServerMessageReceivedListener(UnityAction<JsonMessage> call) {
         _ServerMessageReceivedEvent.AddListener(call);
+    }
+
+    public void AddServerStringReceivedListener(UnityAction<string> call) {
+        _ServerStringReceivedEvent.AddListener(call);
     }
 
     public void StartClient() {
@@ -157,6 +179,12 @@ public class TCPMessageHandler : MonoBehaviour
         }
     }
 
+    public void SendStringToServer(string str) {
+        if (_client.IsConnected()) {
+            _client.SendStringToServer(str);
+        }
+    }
+
     public void RunCallbackIntId(int id, string args) {
         if(id >= 0) {
             _callbacksIntId[id](args);
@@ -182,6 +210,10 @@ public class TCPMessageHandler : MonoBehaviour
     #region ServerToClient
     public void SendMessageToClient(JsonMessage msg) {
         _server.SendMessage(msg);
+    }
+
+    public void SendStringToClient(string str) {
+        _server.SendString(str);
     }
 
     #endregion
