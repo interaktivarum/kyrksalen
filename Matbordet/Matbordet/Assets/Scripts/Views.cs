@@ -34,6 +34,7 @@ public class Views : MonoBehaviour
             view.gameObject.SetActive(false);
         }
         transform.GetChild(_viewId).gameObject.SetActive(true);
+        _mh.SendStringToServer("ViewLoaded:" + transform.GetChild(_viewId).name);
     }
 
     public void NextView() {

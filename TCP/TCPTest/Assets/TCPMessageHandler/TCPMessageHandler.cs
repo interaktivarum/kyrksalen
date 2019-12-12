@@ -91,7 +91,6 @@ public class TCPMessageHandler : MonoBehaviour
             }
             else {
                 _ClientMessageSelfEvent.Invoke("Handler: Ping server");
-                //SendMessageToServer(new JsonMessage("ping"));
                 SendStringToServer("ping");
             }
             yield return new WaitForSeconds(10);

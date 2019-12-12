@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class ViewMenu : MonoBehaviour
 {
-
+    public string serverName;
     public FoodCourse[] courses;
-    private int _courseId = 0;
+    
+    //private int _courseId = 0;
     //public Transform objTransforms;
 
     TCPMessageHandler _mh;
@@ -20,11 +21,11 @@ public class ViewMenu : MonoBehaviour
     void Start()
     {
         _mh = FindObjectOfType<TCPMessageHandler>();
-        _mh.AddCallback("UnloadMenu", UnloadView);
+        _mh.AddCallback("UnloadView:"+name, UnloadView);
     }
 
     private void OnEnable() {
-        LoadMenu();
+        LoadView();
     }
 
     // Update is called once per frame
@@ -43,39 +44,33 @@ public class ViewMenu : MonoBehaviour
             }
 
             if (courseHasDish) {
-                //If hit, iterate to perform action 
-                if (dish == c.correct) {
-                    c.correctSelected = true;
-                    Debug.Log("Correct");
-                    foreach (FoodDish d in c.dishes) {
 
-                        if (dish == d) {
-                            d.Choose();
-                            _courseId++;
-
-                            //Send server message
-                            /*_mh.SendMessageToServer(new JsonMessage("DishSelected") {
-                                args = "{\"id\": \"" + d.serverName + "\"}"
-                            });*/
-                            _mh.SendStringToServer("DishSelected" + d.serverName);
-                        }
-                        else {
+                foreach (FoodDish d in c.dishes) {
+                    if (dish == d) {
+                        d.Select();        
+                        _mh.SendStringToServer("DishSelected:" + d.name);
+                        c.correctSelected = dish == c.correct;
+                        //_courseId++;
+                    }
+                    else {
+                        if (dish == c.correct) {
                             d.Disappear();
                         }
-
-                    }
-                    if (AllCorrectSelected()) {
-                        _mh.SendStringToServer("AllDishesSelected");
+                        else {
+                            d.Deselect();
+                        }
                     }
                 }
-                else {
-                    c.correctSelected = false;
+                if (AllCorrectSelected()) {
+                    _mh.SendStringToServer("AllDishesSelected");
                 }
             }
+                
+            
         }
     }
 
-    void LoadMenu() {
+    void LoadView() {
         foreach (FoodCourse c in courses) {
             foreach (FoodDish d in c.dishes) {
                 d.gameObject.SetActive(true);
@@ -114,7 +109,7 @@ public class ViewMenu : MonoBehaviour
 
     public void SetCourses(FoodCourse[] c) {
         courses = c;
-        _courseId = 0;
+        //_courseId = 0;
     }
 
     bool AllCorrectSelected() {

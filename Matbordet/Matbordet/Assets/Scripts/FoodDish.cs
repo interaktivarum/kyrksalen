@@ -36,7 +36,6 @@ public class FoodDish : MonoBehaviour
     }
 
     private void OnMouseDown() {
-        Debug.Log(dishName);
         GetComponentInParent<ViewMenu>().DishHit(this);
     }
 
@@ -108,10 +107,14 @@ public class FoodDish : MonoBehaviour
         return myTween.WaitForCompletion();
     }
 
-    public void Choose() {
+    public void Select() {
         transform.DORotate(new Vector3(0, 0, 10), 1f);
         Tween myTween = transform.DOScale(transform.localScale * 1.25f, 1f);
-        //myTween.OnComplete(Disappear);
+    }
+
+    public void Deselect() {
+        transform.DORotate(new Vector3(0, 0, 0), 1f);
+        Tween myTween = transform.DOScale(new Vector3(1, 1, 1), 1f);
     }
 
 }

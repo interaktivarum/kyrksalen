@@ -32,7 +32,7 @@ public class Client : MonoBehaviour {
 
     public void SetMessageHandler(TCPMessageHandler handler) {
         _messageHandler = handler;
-        _messageHandler.AddCallback("Close", CloseClient);
+        _messageHandler.AddCallback("CloseConnection", CloseClient);
     }
 
     public void SetIPSettings(string ip, int p) {
@@ -93,7 +93,9 @@ public class Client : MonoBehaviour {
         //While there is a connection with the client, await for messages
 
         _messageHandler._ClientMessageSelfEvent.Invoke("ConnectedToServer");
-        SendMessageToServer(new JsonMessage("ClientConnected"));
+        SendStringToServer("ClientConnected");
+
+        _isReading = false;
 
         do {
             if (!_isReading) {
@@ -154,7 +156,7 @@ public class Client : MonoBehaviour {
         
     //Send "Close" message to the server, and waits the "Close" message response from server
     public void SendCloseToServer() {
-        SendMessageToServer(new JsonMessage("Close"));
+        SendStringToServer("CloseConnection");
     }
 
     public void SendMessageToServer(JsonMessage msg) {
@@ -173,7 +175,10 @@ public class Client : MonoBehaviour {
         //Build message to server
         byte[] msgBytes = Encoding.ASCII.GetBytes(str + _messageHandler.separator);
         //Start Sync Writing
-        m_netStream.Write(msgBytes, 0, msgBytes.Length);
+        try {
+            m_netStream.Write(msgBytes, 0, msgBytes.Length);
+        }
+        catch(Exception e) { }
     }
 
     //Callback called when "BeginRead" is ended

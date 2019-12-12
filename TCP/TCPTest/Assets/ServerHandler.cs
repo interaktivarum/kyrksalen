@@ -26,7 +26,7 @@ public class ServerHandler : MonoBehaviour {
         _mh.AddServerStringSentListener(LogSent);
         _mh.AddServerStringReceivedListener(LogReceived);
 
-        ClearCustomMessage();
+        ClearCustomString();
 
         Log("Serverlogg, nya inlägg överst");
     }
@@ -52,7 +52,8 @@ public class ServerHandler : MonoBehaviour {
 
     public void ClearCustomMessage() {
         customMessage.text = JsonUtility.ToJson(new JsonMessage {
-            cbStr = "RandomizeColors"
+            cbStr = "SetColors",
+            args = JsonUtility.ToJson(new MsgColor { r = 1, g = 0, b = 0 })
         });
     }
 

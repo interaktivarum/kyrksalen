@@ -76,6 +76,8 @@ public class Server : MonoBehaviour
 
         _messageHandler._ServerMessageSelfEvent.Invoke("ClientConnected");
 
+        _isReading = false;
+
         //While there is a connection with the client, await for messages
         do {
 
@@ -95,7 +97,6 @@ public class Server : MonoBehaviour
                 m_bytesReceived = 0;
                 _isReading = false;
             }
-
             
             yield return new WaitForSeconds(1);
 
@@ -115,19 +116,7 @@ public class Server : MonoBehaviour
             if (msg.name == "MouseButtonLeft") {
                 SendMessage(msg);
             }
-            else if (msg.name == "MouseButtonRight") {
-                msg.cbStr = "SetColors";
-                msg.args = "{\"r\": 1, \"g\": 1, \"b\": 1}";
-                SendMessage(msg);
-            }
-            //If message received from client is "Close", send another "Close" to the client
-            else if (msg.name == "Close") {
-                JsonMessage msgClose = new JsonMessage {
-                    cbStr = "Close"
-                };
-                SendMessage(msgClose);
-                m_netStream = null;
-            }
+
 
             _messageHandler._ServerMessageReceivedEvent.Invoke(msg);
 
@@ -139,6 +128,13 @@ public class Server : MonoBehaviour
             string[] msgs = m_receivedMessage.Trim().Split(_messageHandler.separator);
 
             foreach (string msg in msgs) {
+
+                //If message received from client is "CloseConnection", send another "CloseConnection" to the client
+                if (msg == "CloseConnection") {
+                    SendString("CloseConnection");
+                    m_netStream = null;
+                }
+
                 _messageHandler._ServerStringReceivedEvent.Invoke(msg);
             }
         }
@@ -158,7 +154,10 @@ public class Server : MonoBehaviour
         //Build message to server
         byte[] msgBytes = Encoding.ASCII.GetBytes(str + _messageHandler.separator);
         //Start Sync Writing
-        m_netStream.Write(msgBytes, 0, msgBytes.Length);
+        try {
+            m_netStream.Write(msgBytes, 0, msgBytes.Length);
+        }
+        catch (Exception e) { }
     }
 
     //Callback called when "BeginRead" is ended

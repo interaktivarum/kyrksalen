@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ViewProfiles : MonoBehaviour
 {
+    public string serverName;
     public Profile[] profiles;
     public Transform objTransforms;
     public ViewMenu viewMenu;
@@ -18,54 +19,51 @@ public class ViewProfiles : MonoBehaviour
     // Start is called before the first frame update
     void Start() {
         _mh = GameObject.FindObjectOfType<TCPMessageHandler>();
+        _mh.AddCallback("UnloadView:"+name, UnloadView);
     }
 
     private void OnEnable() {
-        LoadProfiles();
+        LoadView();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) {
-            Transform hitTrans = null;
-            foreach (Transform d in objTransforms) {
-                Profile pScript = d.GetComponent<Profile>();
-                if (pScript.HitTest()) {
-                    hitTrans = d;
-                }
-            }
-            if (hitTrans) {
-                foreach (Transform p in objTransforms) {
-                    Profile pScript = p.GetComponent<Profile>();
-                    if (hitTrans == p) {
-                        pScript.Choose();
-                        viewMenu.GetComponent<ViewMenu>().SetCourses(pScript.courses);
+    }
 
-                        //Send server message
-                        /*_mh.SendMessageToServer(new JsonMessage("ChildSelected") {
-                            args = "{\"id\": \"" + pScript.serverName + "\"}"
-                        });*/
-                        _mh.SendStringToServer("ChildSelected" + pScript.serverName);
-                    }
-                    else {
-                        pScript.Disappear();
-                    }
-                }
-                
+    public void ProfileHit(Profile pHit) {
+        foreach (Profile p in profiles) {
+            if (p == pHit) {
+                p.Choose();
+                viewMenu.GetComponent<ViewMenu>().SetCourses(p.courses);
+                _mh.SendStringToServer("ChildSelected:" + p.name);
             }
-        }
-        if (objTransforms.childCount == 0) {
-            gameObject.GetComponentInParent<Views>().NextView();
+            else {
+                p.Disappear();
+            }
         }
     }
 
-    void LoadProfiles() {
-
+    void LoadView() {
         foreach (Profile p in profiles) {
-            GameObject profile = Instantiate(p.gameObject, objTransforms);
-            profile.SetActive(true);
-            //p.Appear();
+            p.gameObject.SetActive(true);
+            p.Appear();
         }
+    }
+
+    public void UnloadView(string args) {
+        StartCoroutine(UnloadProfiles());
+    }
+
+    IEnumerator UnloadProfiles() {
+        YieldInstruction yi = null;
+        foreach (Profile p in profiles) {
+            if (p.gameObject.activeSelf) {
+                yi = p.Disappear();
+            }
+        }
+        yield return yi; //Note! Only the last animation counts
+        gameObject.GetComponentInParent<Views>().NextView();
+
     }
 }
