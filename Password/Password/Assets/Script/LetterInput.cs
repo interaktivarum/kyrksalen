@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
-public class PasswordCheck : MonoBehaviour
+public class LetterInput : MonoBehaviour
 {
 
     public string password;
     public GameObject cap;
     public GameObject freeSpheresContainer;
     bool _isOpen = false;
+    public WordHandler wordHandler;
+    public Image background;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +40,7 @@ public class PasswordCheck : MonoBehaviour
                 seq.Append(other.gameObject.transform.DORotate(new Vector3(), 1));
             }
             if (password.Length >= 5) {
+                InputFinished();
                 OpenCap();
             }
         }
@@ -53,6 +57,17 @@ public class PasswordCheck : MonoBehaviour
         password = "";
         _isOpen = false;
         cap.transform.DOLocalMoveX(-0.5f, 1);
+        Light light = GetComponentInChildren<Light>();
+        light.DOIntensity(0, 1);
+        background.DOColor(Color.white, 1);
+    }
+
+    void InputFinished() {
+        bool correct = wordHandler.InputFinished(password);
+        Light light = GetComponentInChildren<Light>();
+        light.DOIntensity(correct ? 1 : 3, 5);
+        light.color = correct ? Color.green : Color.red;
+        background.DOColor((Color.white*3 + light.color) / 4, 5);
     }
 
 }

@@ -11,7 +11,7 @@ public class Server : MonoBehaviour
     #region Public Variables
     [Header("Network")]
     public int port = 8080;
-    public float waitingMessagesFrequency = 1;
+    public float waitingMessagesFrequency = 3;
     #endregion
 
     #region  Network m_Variables
@@ -22,9 +22,11 @@ public class Server : MonoBehaviour
     private int m_bytesReceived = 0;
     private string m_receivedMessage = "";
     private IEnumerator m_ClientComCoroutine = null;
+    bool _isReading;
+    TCPMessageHandler _messageHandler;
     #endregion
 
-    TCPMessageHandler _messageHandler;
+
 
     //Set UI interactable properties
     private void Start()
@@ -74,39 +76,29 @@ public class Server : MonoBehaviour
 
         _messageHandler._ServerMessageSelfEvent.Invoke("ClientConnected");
 
+        _isReading = false;
+
         //While there is a connection with the client, await for messages
         do {
-            //Start Async Reading
-            m_netStream.BeginRead(m_buffer, 0, m_buffer.Length, MessageReceived, m_netStream);
+
+            if (!_isReading) {
+                _isReading = true;
+                //Start Async Reading
+                m_netStream.BeginRead(m_buffer, 0, m_buffer.Length, MessageReceived, m_netStream);
+            }
 
             //If there is any msg
             if (m_bytesReceived > 0) {
 
-                JsonMessage msg = JsonUtility.FromJson<JsonMessage>(m_receivedMessage);
+                ReadMessage();
 
-                if (msg.name == "MouseButtonLeft") {
-                    SendMessage(msg);
-                }
-                else if (msg.name == "MouseButtonRight") {
-                    msg.cbStr = "SetColors";
-                    msg.args = "{\"r\": 1, \"g\": 1, \"b\": 1}";
-                    SendMessage(msg);
-                }
-                //If message received from client is "Close", send another "Close" to the client
-                else if (msg.name == "Close") {
-                    JsonMessage msgClose = new JsonMessage {
-                        cbStr = "Close"
-                    };
-                    SendMessage(msgClose);
-                    m_netStream = null;
-                }
+                //yield return new WaitForSeconds(2);
 
-                _messageHandler._ServerMessageReceivedEvent.Invoke(msg);
+                m_bytesReceived = 0;
+                _isReading = false;
             }
-
-            m_bytesReceived = 0;
-
-            yield return new WaitForSeconds(waitingMessagesFrequency);
+            
+            yield return new WaitForSeconds(1);
 
         } while (m_bytesReceived >= 0 && m_netStream != null && m_client.Connected);
 
@@ -115,14 +107,58 @@ public class Server : MonoBehaviour
         _messageHandler._ServerMessageSelfEvent.Invoke("ClientDisconnected");
     }
 
+    void ReadMessage() {
+        bool isJsonMessage = false;
+
+        try {
+            JsonMessage msg = JsonUtility.FromJson<JsonMessage>(m_receivedMessage);
+            _messageHandler._ServerMessageReceivedEvent.Invoke(msg);
+
+            if (msg.name == "MouseButtonLeft") {
+                SendMessage(msg);
+            }
+
+            isJsonMessage = true;
+        }
+        catch (Exception e) {
+        }
+
+        if (!isJsonMessage) {
+            string[] msgs = m_receivedMessage.Trim().Split(_messageHandler.separator);
+
+            foreach (string msg in msgs) {
+
+                _messageHandler._ServerStringReceivedEvent.Invoke(msg);
+
+                //If message received from client is "CloseConnection", send another "CloseConnection" to the client
+                if (msg == "CloseConnection") {
+                    SendString("CloseConnection");
+                    m_netStream = null;
+                }
+
+                
+            }
+        }
+    }
+
     public void SendMessage(JsonMessage msg) {
-
-        string msgStr = JsonUtility.ToJson(msg);
-
-        byte[] msgBytes = Encoding.ASCII.GetBytes(msgStr); //Encode message as bytes
-        m_netStream.Write(msgBytes, 0, msgBytes.Length);
-
+        DoSendString(JsonUtility.ToJson(msg));
         _messageHandler._ServerMessageSentEvent.Invoke(msg);
+    }
+
+    public void SendString(string str) {
+        DoSendString(str);
+        _messageHandler._ServerStringSentEvent.Invoke(str);
+    }
+
+    void DoSendString(string str) {
+        //Build message to server
+        byte[] msgBytes = Encoding.UTF8.GetBytes(str + _messageHandler.separator);
+        //Start Sync Writing
+        try {
+            m_netStream.Write(msgBytes, 0, msgBytes.Length);
+        }
+        catch (Exception e) { }
     }
 
     //Callback called when "BeginRead" is ended
@@ -132,7 +168,7 @@ public class Server : MonoBehaviour
         {
             //build message received from client
             m_bytesReceived = m_netStream.EndRead(result);                              //End async reading
-            m_receivedMessage = Encoding.ASCII.GetString(m_buffer, 0, m_bytesReceived);   //De-encode message as string
+            m_receivedMessage = Encoding.UTF8.GetString(m_buffer, 0, m_bytesReceived);   //De-encode message as string
         }
     }
 

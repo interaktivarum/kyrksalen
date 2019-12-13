@@ -153,7 +153,7 @@ public class Server : MonoBehaviour
 
     void DoSendString(string str) {
         //Build message to server
-        byte[] msgBytes = Encoding.ASCII.GetBytes(str + _messageHandler.separator);
+        byte[] msgBytes = Encoding.UTF8.GetBytes(str + _messageHandler.separator);
         //Start Sync Writing
         try {
             m_netStream.Write(msgBytes, 0, msgBytes.Length);
@@ -168,7 +168,7 @@ public class Server : MonoBehaviour
         {
             //build message received from client
             m_bytesReceived = m_netStream.EndRead(result);                              //End async reading
-            m_receivedMessage = Encoding.ASCII.GetString(m_buffer, 0, m_bytesReceived);   //De-encode message as string
+            m_receivedMessage = Encoding.UTF8.GetString(m_buffer, 0, m_bytesReceived);   //De-encode message as string
         }
     }
 

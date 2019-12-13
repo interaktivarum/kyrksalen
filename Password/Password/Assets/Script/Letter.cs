@@ -8,11 +8,18 @@ public class Letter : MonoBehaviour {
 
     public string letter;
     public GameObject letterSpherePrefab;
-    public GameObject freeSpheresContainer;
+    public float bounceDelay;
     private GameObject _sphere = null;
     private bool _creatingLetter = false;
 
+    private TCPMessageHandler _mh;
+
     void Start() {
+
+        _mh = FindObjectOfType<TCPMessageHandler>();
+
+        StartCoroutine(BounceLoop());
+        
     }
 
     // Update is called once per frame
@@ -33,6 +40,7 @@ public class Letter : MonoBehaviour {
 
     void OnMouseDown() {
         DropSphere();
+        _mh.SendStringToServer("LetterSelected:" + letter);
     }
 
     void InitSphere () {
@@ -43,13 +51,30 @@ public class Letter : MonoBehaviour {
 
     void DropSphere () {
         if (_sphere) {
-            GameObject newSphere = Instantiate(_sphere, freeSpheresContainer.transform, true);
+            Transform freeSpheresContainer = GetComponentInParent<Letters>().freeSpheresContainer.transform;
+            GameObject newSphere = Instantiate(_sphere, freeSpheresContainer, true);
             newSphere.transform.position = _sphere.transform.position;
             newSphere.GetComponentInChildren<Rigidbody>().useGravity = true;
             newSphere.GetComponent<SphereCollider>().enabled = true;
             Destroy(_sphere);
             _sphere = null;
         }
+    }
+
+    IEnumerator BounceLoop() {
+        while (true) {
+            if (_sphere && !_creatingLetter) {
+                Bounce();
+            }
+            yield return new WaitForSeconds(10);
+        }
+    }
+
+    void Bounce() {
+        Sequence sequence = DOTween.Sequence();
+        sequence.SetDelay(bounceDelay);
+        sequence.Append(transform.DOLocalMoveY(0.1f, 0.5f));
+        sequence.Append(transform.DOLocalMoveY(0, 1f));
     }
 
 }

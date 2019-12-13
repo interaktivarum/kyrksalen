@@ -2,10 +2,23 @@
   "anagrams": [
     {
       "words": [
-        "krona",
-        "korna",
-        "orkan",
-        "ankor"
+        "panik",
+        "knipa",
+        "pinka"
+      ]
+    },
+    {
+      "words": [
+        "kista",
+        "sikta",
+        "skita"
+      ]
+    },
+    {
+      "words": [
+        "gräva",
+        "vägar",
+        "vägra"
       ]
     }
   ]

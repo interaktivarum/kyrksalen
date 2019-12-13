@@ -21,6 +21,7 @@ public class Client : MonoBehaviour {
     private int m_bytesReceived = 0;
     private string m_receivedMessage = "";
     private IEnumerator m_ServerComCoroutine = null;
+    bool _isReading;
     #endregion
 
     TCPMessageHandler _messageHandler;
@@ -31,7 +32,7 @@ public class Client : MonoBehaviour {
 
     public void SetMessageHandler(TCPMessageHandler handler) {
         _messageHandler = handler;
-        _messageHandler.AddCallback("Close", CloseClient);
+        _messageHandler.AddCallback("CloseConnection", CloseClient);
     }
 
     public void SetIPSettings(string ip, int p) {
@@ -92,54 +93,92 @@ public class Client : MonoBehaviour {
         //While there is a connection with the client, await for messages
 
         _messageHandler._ClientMessageSelfEvent.Invoke("ConnectedToServer");
-        SendMessageToServer(new JsonMessage("ClientConnected"));
+        SendStringToServer("ClientConnected");
+
+        _isReading = false;
 
         do {
-            //Start Async Reading
-            m_netStream.BeginRead(m_buffer, 0, m_buffer.Length, MessageReceived, m_netStream);
+            if (!_isReading) {
+                _isReading = true;
+                //Start Async Reading
+                m_netStream.BeginRead(m_buffer, 0, m_buffer.Length, MessageReceived, m_netStream);
+            }
 
             //If there is any msg
             if (m_bytesReceived > 0) {
 
-                JsonMessage msg = JsonUtility.FromJson<JsonMessage>(m_receivedMessage);
+                ReadMessage();
+                m_bytesReceived = 0;
+                _isReading = false;
 
-                if (msg.cbInt >= 0) {
-                    _messageHandler.RunCallbackIntId(msg.cbInt, msg.args);
-                }
-                if (msg.cbStr.Length > 0) {
-                    _messageHandler.RunCallbackStrId(msg.cbStr, msg.args);
-                }
-
-                _messageHandler._ClientMessageReceivedEvent.Invoke(msg);
-
-                m_receivedMessage = "";
+                //m_receivedMessage = "";
             }
 
-            m_bytesReceived = 0;
-
-            yield return new WaitForSeconds(waitingMessagesFrequency);
+            yield return new WaitForSeconds(1);
 
         } while (m_bytesReceived >= 0 && m_netStream != null && m_client.Connected);
 
         CloseConnection();
         _messageHandler._ClientMessageSelfEvent.Invoke("DisconnectedFromServer");
     }
+
+    void ReadMessage() {
+        bool isJsonMessage = false;
+
+        try {
+            JsonMessage msg = JsonUtility.FromJson<JsonMessage>(m_receivedMessage);
+
+            if (msg.cbInt >= 0) {
+                _messageHandler.RunCallbackIntId(msg.cbInt, msg.args);
+            }
+            if (msg.cbStr.Length > 0) {
+                _messageHandler.RunCallbackStrId(msg.cbStr, msg.args);
+            }
+
+            _messageHandler._ClientMessageReceivedEvent.Invoke(msg);
+
+            isJsonMessage = true;
+        }
+        catch (Exception e) {
+        }
+
+        if (!isJsonMessage) {
+
+            string[] msgs = m_receivedMessage.Trim().Split(_messageHandler.separator);
+
+            foreach(string msg in msgs) {
+                _messageHandler.RunCallbackStrId(msg, null);
+                _messageHandler._ClientStringReceivedEvent.Invoke(msg);
+            }
+            
+        }
+    }
         
     //Send "Close" message to the server, and waits the "Close" message response from server
     public void SendCloseToServer() {
-        SendMessageToServer(new JsonMessage("Close"));
+        SendStringToServer("CloseConnection");
     }
 
     public void SendMessageToServer(JsonMessage msg) {
         if (!m_client.Connected || m_netStream == null) return; //early out if there is nothing connected
-
-        string msgStr = JsonUtility.ToJson(msg);
-
-        //Build message to server
-        byte[] msgBytes = Encoding.ASCII.GetBytes(msgStr);
-        //Start Sync Writing
-        m_netStream.Write(msgBytes, 0, msgBytes.Length);
+        DoSendString(JsonUtility.ToJson(msg));
         _messageHandler._ClientMessageSentEvent.Invoke(msg);
+    }
+
+    public void SendStringToServer(string str) {
+        if (!m_client.Connected || m_netStream == null) return; //early out if there is nothing connected
+        DoSendString(str);
+        _messageHandler._ClientStringSentEvent.Invoke(str);
+    }
+
+    void DoSendString(string str) {
+        //Build message to server
+        byte[] msgBytes = Encoding.UTF8.GetBytes(str + _messageHandler.separator);
+        //Start Sync Writing
+        try {
+            m_netStream.Write(msgBytes, 0, msgBytes.Length);
+        }
+        catch(Exception e) { }
     }
 
     //Callback called when "BeginRead" is ended
@@ -147,7 +186,7 @@ public class Client : MonoBehaviour {
         if (result.IsCompleted && m_client.Connected) {
             //build message received from server
             m_bytesReceived = m_netStream.EndRead(result);
-            m_receivedMessage = Encoding.ASCII.GetString(m_buffer, 0, m_bytesReceived);
+            m_receivedMessage = Encoding.UTF8.GetString(m_buffer, 0, m_bytesReceived);
         }
     }
 
