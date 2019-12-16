@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Prefabs : MonoBehaviour
+public class RoomBound : MonoBehaviour
 {
+
+    public Vector3 margin;
+
     // Start is called before the first frame update
     void Start()
     {
-        foreach (Transform child in transform) {
-            //child.gameObject.SetActive(false);
-        }
     }
 
     // Update is called once per frame
