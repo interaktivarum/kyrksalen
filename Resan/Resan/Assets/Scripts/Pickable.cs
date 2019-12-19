@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using DG.Tweening;
 
 public class Pickable : MonoBehaviour
 {
     float _z;
-    bool _isDragging;
     Vector3 _mouseDist;
 
     // Start is called before the first frame update
@@ -23,14 +21,12 @@ public class Pickable : MonoBehaviour
     }
 
     private void OnMouseDown() {
-        _isDragging = true;
         //transform.DOLocalMoveZ(0,0.25f);
         _mouseDist = Camera.main.WorldToScreenPoint(transform.localPosition) - Input.mousePosition;
         UpdatePosition();
     }
 
     private void OnMouseUp() {
-        _isDragging = false;
         //transform.DOLocalMoveZ(_z, 0.25f);
         transform.DOLocalMoveY(0, 0.2f);
     }
