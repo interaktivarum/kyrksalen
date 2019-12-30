@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewMenu : MonoBehaviour
-{
+public class ViewMenu : ViewBase {
+
     public string serverName;
     public FoodCourse[] courses;
     
@@ -79,7 +79,8 @@ public class ViewMenu : MonoBehaviour
         }
     }
 
-    public void UnloadView(string args) {
+    public override void UnloadView(string args) {
+        //base.UnloadView(args);
         StartCoroutine(UnloadMenu());
     }
 

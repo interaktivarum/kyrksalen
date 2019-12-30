@@ -20,7 +20,10 @@ public class Views : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {   
+    {
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            transform.GetChild(_viewId).GetComponentInChildren<ViewBase>().UnloadView();
+        }
     }
 
     void LoadView(int id) {

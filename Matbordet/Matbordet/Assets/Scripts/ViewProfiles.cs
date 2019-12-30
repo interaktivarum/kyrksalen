@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewProfiles : MonoBehaviour
+public class ViewProfiles : ViewBase
 {
     public string serverName;
     public Profile[] profiles;
     public Transform objTransforms;
     public ViewMenu viewMenu;
-    //public Profile selectedProfile;
+    public bool _selected;
 
     TCPMessageHandler _mh;
 
@@ -32,26 +32,31 @@ public class ViewProfiles : MonoBehaviour
     }
 
     public void ProfileHit(Profile pHit) {
-        foreach (Profile p in profiles) {
-            if (p == pHit) {
-                p.Choose();
-                viewMenu.GetComponent<ViewMenu>().SetCourses(p.courses);
-                _mh.SendStringToServer("ChildSelected:" + p.name);
-            }
-            else {
-                p.Disappear();
+        if (!_selected) {
+            foreach (Profile p in profiles) {
+                if (p == pHit) {
+                    _selected = true;
+                    p.Choose();
+                    viewMenu.GetComponent<ViewMenu>().SetCourses(p.courses);
+                    _mh.SendStringToServer("ChildSelected:" + p.name);
+                }
+                else {
+                    p.Disappear();
+                }
             }
         }
     }
 
     void LoadView() {
+        _selected = false;
         foreach (Profile p in profiles) {
             p.gameObject.SetActive(true);
             p.Appear();
         }
     }
 
-    public void UnloadView(string args) {
+    public override void UnloadView(string args) {
+        //base.UnloadView(args);
         StartCoroutine(UnloadProfiles());
     }
 

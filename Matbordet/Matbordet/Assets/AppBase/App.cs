@@ -9,8 +9,6 @@ public class App : MonoBehaviour
     void Start()
     {
         Screen.fullScreen = true;
-        Screen.autorotateToPortrait = true;
-        Screen.autorotateToPortraitUpsideDown = true;
         Screen.orientation = ScreenOrientation.AutoRotation;
     }
 
