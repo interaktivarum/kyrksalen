@@ -33,16 +33,18 @@ public class ViewProfiles : ViewBase
 
     public void ProfileHit(Profile pHit) {
         if (!_selected) {
+            int iP = 0;
             foreach (Profile p in profiles) {
                 if (p == pHit) {
                     _selected = true;
                     p.Choose();
                     viewMenu.GetComponent<ViewMenu>().SetCourses(p.courses);
-                    _mh.SendStringToServer("ChildSelected:" + p.name);
+                    _mh.SendStringToServer("ChildSelected:" + iP);
                 }
                 else {
                     p.Disappear();
                 }
+                iP++;
             }
         }
     }

@@ -8,6 +8,7 @@ using UnityEngine.Events;
 public class IPSettings {
     public string ip;
     public int port;
+    public bool autoconnect;
 }
 
 [System.Serializable]
@@ -37,10 +38,9 @@ public class StrEvent : UnityEvent<string> {
 
 public class TCPMessageHandler : MonoBehaviour
 {
-    public bool autoConnect = false;
     Client _client;
     Server _server;
-    IPSettings settings;
+    public IPSettings settings;
     public char separator = ' ';
 
     public delegate void CallbackDelegate(string msg); // This defines what type of method you're going to call.
@@ -84,8 +84,7 @@ public class TCPMessageHandler : MonoBehaviour
     private IEnumerator NetworkCoroutine() {
         while (true) {
             if (!_client.IsConnected()) {
-                if (autoConnect) {
-                    
+                if (settings.autoconnect) {
                     StartClient();
                 }
             }
@@ -98,7 +97,7 @@ public class TCPMessageHandler : MonoBehaviour
     }
 
     public void SetAutoConnect(bool value) {
-        autoConnect = value;
+        settings.autoconnect = value;
     }
 
     public void AddClientMessageSelfListener(UnityAction<string> call) {
@@ -156,8 +155,10 @@ public class TCPMessageHandler : MonoBehaviour
         if (File.Exists(filePath)) {
             // Read the json from the file into a string
             string dataAsJson = File.ReadAllText(filePath);
+            Debug.Log(dataAsJson);
             // Pass the json to JsonUtility, and tell it to create a GameData object from it
             settings = JsonUtility.FromJson<IPSettings>(dataAsJson);
+            Debug.Log(settings.autoconnect);
         }
         else {
             Debug.LogError("Cannot load json data!");

@@ -13,6 +13,7 @@ public class AnagramList {
 [System.Serializable]
 public class Anagram {
     public string[] words;
+    public string extra;
 }
 
 public class WordHandler : MonoBehaviour
@@ -20,7 +21,7 @@ public class WordHandler : MonoBehaviour
 
     public AnagramList anagrams;
     public char[] letters;
-    public Letters lettersHandler;
+    public LetterPipes lettersHandler;
 
     private TCPMessageHandler _mh;
 
@@ -28,8 +29,8 @@ public class WordHandler : MonoBehaviour
     void Start()
     {
         WordsFromJSON();
-        DistinctLetters();
-        lettersHandler.CreateLetters(letters);
+        //DistinctLetters();
+        //lettersHandler.CreateLetters(letters);
 
         _mh = FindObjectOfType<TCPMessageHandler>();
     }
@@ -54,9 +55,10 @@ public class WordHandler : MonoBehaviour
         else {
             Debug.LogError("Cannot load json data!");
         }
+
     }
 
-    void DistinctLetters() {
+    /*void DistinctLetters() {
         string appended = "";
         foreach (Anagram anagram in anagrams.anagrams) {
             foreach(string word in anagram.words) {
@@ -64,9 +66,9 @@ public class WordHandler : MonoBehaviour
             }
         }
         letters = appended.Distinct().ToArray(); 
-    }
+    }*/
 
-    public bool InputFinished(string password) {
+    /*public bool InputFinished(string password) {
         bool correct = PasswordCheck(password);
 
         if (correct) {
@@ -76,11 +78,10 @@ public class WordHandler : MonoBehaviour
             _mh.SendStringToServer("IncorrectPassword:" + password);
         }
         
-
         return correct;
-    }
+    }*/
 
-    public bool PasswordCheck(string password) {
+    /*public bool PasswordCheck(string password) {
         foreach (Anagram anagram in anagrams.anagrams) {
             foreach (string word in anagram.words) {
                 if (word.ToLower() == password.ToLower()) {
@@ -89,5 +90,9 @@ public class WordHandler : MonoBehaviour
             }
         }
         return false;
+    }*/
+
+    public Anagram GetAnagram(int teamId) {
+        return anagrams.anagrams[teamId];
     }
 }

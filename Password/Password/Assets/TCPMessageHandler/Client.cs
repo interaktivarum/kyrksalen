@@ -26,6 +26,7 @@ public class Client : MonoBehaviour {
 
     TCPMessageHandler _messageHandler;
 
+
     //Set UI interactable properties
     private void Start() {
     }
@@ -33,6 +34,7 @@ public class Client : MonoBehaviour {
     public void SetMessageHandler(TCPMessageHandler handler) {
         _messageHandler = handler;
         _messageHandler.AddCallback("CloseConnection", CloseClient);
+        _messageHandler.AddCallback("Quit", Quit);
     }
 
     public void SetIPSettings(string ip, int p) {
@@ -93,7 +95,7 @@ public class Client : MonoBehaviour {
         //While there is a connection with the client, await for messages
 
         _messageHandler._ClientMessageSelfEvent.Invoke("ConnectedToServer");
-        SendStringToServer("ClientConnected");
+        _messageHandler.SendStringToServer("ClientConnected");
 
         _isReading = false;
 
@@ -147,7 +149,9 @@ public class Client : MonoBehaviour {
             string[] msgs = m_receivedMessage.Trim().Split(_messageHandler.separator);
 
             foreach(string msg in msgs) {
-                _messageHandler.RunCallbackStrId(msg, null);
+                string msgTrim = msg.Trim(_messageHandler.appendString);
+                msgTrim = msgTrim.Trim(_messageHandler.prependString);
+                _messageHandler.RunCallbackStrId(msgTrim, null);
                 _messageHandler._ClientStringReceivedEvent.Invoke(msg);
             }
             
@@ -156,7 +160,7 @@ public class Client : MonoBehaviour {
         
     //Send "Close" message to the server, and waits the "Close" message response from server
     public void SendCloseToServer() {
-        SendStringToServer("CloseConnection");
+        _messageHandler.SendStringToServer("CloseConnection");
     }
 
     public void SendMessageToServer(JsonMessage msg) {
@@ -193,6 +197,10 @@ public class Client : MonoBehaviour {
     //Close client connection
     private void CloseClient(string msg) {
         m_netStream = null;
+    }
+
+    private void Quit(string msg) {
+        Application.Quit();
     }
 
     public void CloseConnection() {

@@ -34,6 +34,7 @@ public class ViewMenu : ViewBase {
     }
 
     public void DishHit(FoodDish dish) {
+        int iC = 0;
         foreach (FoodCourse c in courses) {
 
             bool courseHasDish = false;
@@ -45,10 +46,11 @@ public class ViewMenu : ViewBase {
 
             if (courseHasDish) {
 
+                int iD = 0;
                 foreach (FoodDish d in c.dishes) {
                     if (dish == d) {
-                        d.Select();        
-                        _mh.SendStringToServer("DishSelected:" + d.name);
+                        d.Select();
+                        _mh.SendStringToServer("Dish" + iC + "Selected:" + iD);
                         c.correctSelected = dish == c.correct;
                         //_courseId++;
                     }
@@ -60,13 +62,14 @@ public class ViewMenu : ViewBase {
                             d.Deselect();
                         }
                     }
+                    iD++;
                 }
                 if (AllCorrectSelected()) {
-                    _mh.SendStringToServer("AllDishesSelected");
+                    _mh.SendStringToServer("AllDishesSelected:1");
                 }
             }
-                
-            
+
+            iC++;
         }
     }
 

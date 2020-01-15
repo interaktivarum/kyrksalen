@@ -11,13 +11,13 @@ public class LetterInput : MonoBehaviour
     public GameObject cap;
     public GameObject freeSpheresContainer;
     bool _isOpen = false;
-    public WordHandler wordHandler;
     public Image background;
+    public Light globalLight;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        CloseCap();
     }
 
     // Update is called once per frame
@@ -57,17 +57,26 @@ public class LetterInput : MonoBehaviour
         password = "";
         _isOpen = false;
         cap.transform.DOLocalMoveX(-0.5f, 1);
-        Light light = GetComponentInChildren<Light>();
-        light.DOIntensity(0, 1);
-        background.DOColor(Color.white, 1);
+        //light.DOIntensity(1, 1);
+        Color c = new Color(0.1f, 0.2f, 1);
+        globalLight.DOColor(c, 2);
+        background.DOColor(c, 2);
     }
 
     void InputFinished() {
-        bool correct = wordHandler.InputFinished(password);
-        Light light = GetComponentInChildren<Light>();
-        light.DOIntensity(correct ? 1 : 3, 5);
-        light.color = correct ? Color.green : Color.red;
-        background.DOColor((Color.white*3 + light.color) / 4, 5);
+        GetComponentInParent<ViewPipes>().InputFinished(password);
+        
+        /*Color c = correct ? Color.green : Color.red;
+
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(globalLight.DOIntensity(0,2));
+        sequence.Append(globalLight.DOColor(c, 0));
+        sequence.Append(globalLight.DOIntensity(3, 2));
+
+        Sequence sequence2 = DOTween.Sequence();
+        sequence2.Append(background.DOColor(Color.gray, 2));
+        sequence2.Append(background.DOColor(c, 2));*/
+        //background.DOColor(c, 3);
     }
 
 }

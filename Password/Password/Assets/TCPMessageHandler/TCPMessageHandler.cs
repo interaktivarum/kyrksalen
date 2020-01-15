@@ -8,6 +8,8 @@ using UnityEngine.Events;
 public class IPSettings {
     public string ip;
     public int port;
+    public bool autoconnect;
+    public string ping;
 }
 
 [System.Serializable]
@@ -37,11 +39,12 @@ public class StrEvent : UnityEvent<string> {
 
 public class TCPMessageHandler : MonoBehaviour
 {
-    public bool autoConnect = false;
     Client _client;
     Server _server;
-    IPSettings settings;
+    public IPSettings settings;
     public char separator = ' ';
+    public char prependString = ' ';
+    public char appendString = ' ';
 
     public delegate void CallbackDelegate(string msg); // This defines what type of method you're going to call.
 
@@ -84,21 +87,20 @@ public class TCPMessageHandler : MonoBehaviour
     private IEnumerator NetworkCoroutine() {
         while (true) {
             if (!_client.IsConnected()) {
-                if (autoConnect) {
-                    
+                if (settings.autoconnect) {
                     StartClient();
                 }
             }
             else {
                 _ClientMessageSelfEvent.Invoke("Handler: Ping server");
-                SendStringToServer("ping");
+                SendStringToServer(settings.ping);
             }
             yield return new WaitForSeconds(10);
         }
     }
 
     public void SetAutoConnect(bool value) {
-        autoConnect = value;
+        settings.autoconnect = value;
     }
 
     public void AddClientMessageSelfListener(UnityAction<string> call) {
@@ -180,7 +182,7 @@ public class TCPMessageHandler : MonoBehaviour
 
     public void SendStringToServer(string str) {
         if (_client.IsConnected()) {
-            _client.SendStringToServer(str);
+            _client.SendStringToServer((prependString + str + appendString).Trim());
         }
     }
 
@@ -212,7 +214,7 @@ public class TCPMessageHandler : MonoBehaviour
     }
 
     public void SendStringToClient(string str) {
-        _server.SendString(str);
+        _server.SendStringToClient((prependString + str + appendString).Trim());
     }
 
     #endregion

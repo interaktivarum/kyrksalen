@@ -128,11 +128,14 @@ public class Server : MonoBehaviour
 
             foreach (string msg in msgs) {
 
+                string msgTrim = msg.Trim(_messageHandler.appendString);
+                msgTrim = msgTrim.Trim(_messageHandler.prependString);
+
                 _messageHandler._ServerStringReceivedEvent.Invoke(msg);
 
                 //If message received from client is "CloseConnection", send another "CloseConnection" to the client
-                if (msg == "CloseConnection") {
-                    SendString("CloseConnection");
+                if (msgTrim == "CloseConnection") {
+                    _messageHandler.SendStringToClient("CloseConnection");
                     m_netStream = null;
                 }
 
@@ -146,7 +149,7 @@ public class Server : MonoBehaviour
         _messageHandler._ServerMessageSentEvent.Invoke(msg);
     }
 
-    public void SendString(string str) {
+    public void SendStringToClient(string str) {
         DoSendString(str);
         _messageHandler._ServerStringSentEvent.Invoke(str);
     }

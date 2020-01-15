@@ -33,6 +33,7 @@ public class Client : MonoBehaviour {
     public void SetMessageHandler(TCPMessageHandler handler) {
         _messageHandler = handler;
         _messageHandler.AddCallback("CloseConnection", CloseClient);
+        _messageHandler.AddCallback("Quit", Quit);
     }
 
     public void SetIPSettings(string ip, int p) {
@@ -193,6 +194,10 @@ public class Client : MonoBehaviour {
     //Close client connection
     private void CloseClient(string msg) {
         m_netStream = null;
+    }
+
+    private void Quit(string msg) {
+        Application.Quit();
     }
 
     public void CloseConnection() {

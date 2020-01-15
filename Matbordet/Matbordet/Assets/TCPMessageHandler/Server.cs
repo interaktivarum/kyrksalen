@@ -112,14 +112,13 @@ public class Server : MonoBehaviour
 
         try {
             JsonMessage msg = JsonUtility.FromJson<JsonMessage>(m_receivedMessage);
+            _messageHandler._ServerMessageReceivedEvent.Invoke(msg);
 
             if (msg.name == "MouseButtonLeft") {
                 SendMessage(msg);
             }
 
-
-            _messageHandler._ServerMessageReceivedEvent.Invoke(msg);
-
+            isJsonMessage = true;
         }
         catch (Exception e) {
         }
@@ -129,13 +128,18 @@ public class Server : MonoBehaviour
 
             foreach (string msg in msgs) {
 
+                string msgTrim = msg.Trim(_messageHandler.appendString);
+                msgTrim = msgTrim.Trim(_messageHandler.prependString);
+
+                _messageHandler._ServerStringReceivedEvent.Invoke(msg);
+
                 //If message received from client is "CloseConnection", send another "CloseConnection" to the client
-                if (msg == "CloseConnection") {
-                    SendString("CloseConnection");
+                if (msgTrim == "CloseConnection") {
+                    _messageHandler.SendStringToClient("CloseConnection");
                     m_netStream = null;
                 }
 
-                _messageHandler._ServerStringReceivedEvent.Invoke(msg);
+                
             }
         }
     }
@@ -145,14 +149,14 @@ public class Server : MonoBehaviour
         _messageHandler._ServerMessageSentEvent.Invoke(msg);
     }
 
-    public void SendString(string str) {
+    public void SendStringToClient(string str) {
         DoSendString(str);
         _messageHandler._ServerStringSentEvent.Invoke(str);
     }
 
     void DoSendString(string str) {
         //Build message to server
-        byte[] msgBytes = Encoding.ASCII.GetBytes(str + _messageHandler.separator);
+        byte[] msgBytes = Encoding.UTF8.GetBytes(str + _messageHandler.separator);
         //Start Sync Writing
         try {
             m_netStream.Write(msgBytes, 0, msgBytes.Length);
@@ -167,7 +171,7 @@ public class Server : MonoBehaviour
         {
             //build message received from client
             m_bytesReceived = m_netStream.EndRead(result);                              //End async reading
-            m_receivedMessage = Encoding.ASCII.GetString(m_buffer, 0, m_bytesReceived);   //De-encode message as string
+            m_receivedMessage = Encoding.UTF8.GetString(m_buffer, 0, m_bytesReceived);   //De-encode message as string
         }
     }
 
