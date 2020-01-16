@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class ViewPipes : ViewBase
-{
+public class ViewPipes : ViewBase {
     public ViewTeams _viewTeams;
     public LetterPipes _pipes;
     public WordHandler _wordHandler;
@@ -13,9 +12,8 @@ public class ViewPipes : ViewBase
     public Light globalLight;
 
     // Start is called before the first frame update
-    void Start()
-    {
-        
+    void Start() {
+
     }
 
     public override void SetReferences() {
@@ -28,12 +26,19 @@ public class ViewPipes : ViewBase
     public override void LoadView() {
         base.LoadView();
         CreateLetters();
+        Clear();
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update() {
+
+    }
+
+    void Clear() {
+        foreach (LetterSphere sphere in GetComponentsInChildren<LetterSphere>()) {
+            Destroy(sphere.gameObject);
+        }
+        GetComponentInChildren<LetterInput>().ClearPassword();
     }
 
     void CreateLetters() {
@@ -46,7 +51,7 @@ public class ViewPipes : ViewBase
 
         if (PasswordCheck(password)) {
             views._mh.SendStringToServer("CorrectPassword:" + password);
-            UnloadView();
+            StartCoroutine(CorrectPassword());
         }
         else {
             AnimateSceneColors(Color.red);
@@ -84,14 +89,27 @@ public class ViewPipes : ViewBase
         return sequence2.WaitForCompletion();
     }
 
-    public override void UnloadView(string args) {
-        //base.UnloadView(args);
-        StartCoroutine(UnloadPipes());
+    YieldInstruction ResetSceneColors() {
+        Color c = new Color(0.1f, 0.2f, 1);
+        globalLight.DOColor(c, 2);
+        return background.DOColor(c, 2).WaitForCompletion();
     }
 
-    IEnumerator UnloadPipes() {
+    public void NewTry() {
+        ResetSceneColors();
+        _pipes.ResetBlocks();
+    }
+
+    IEnumerator CorrectPassword() {
         yield return AnimateSceneColors(Color.green);
-        views.NextView();
+        UnloadView();
+    }
+
+    public override void UnloadView() {
+
+        
+
+        base.UnloadView();
     }
 
 }

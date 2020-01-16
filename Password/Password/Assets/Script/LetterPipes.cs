@@ -38,7 +38,7 @@ public class LetterPipes : MonoBehaviour
         ClearPipes();
         NextHint();
 
-        char[] chars = DistinctLetters(anagram);
+        char[] chars = LettersArray(anagram, true);
 
         System.Random rnd = new System.Random();
         char[] charsRand = chars.OrderBy(x => rnd.Next()).ToArray();
@@ -96,36 +96,28 @@ public class LetterPipes : MonoBehaviour
         }
     }
 
-    public void RearrangeSingle() {
-        string word = anagram.words[0];
-        int i = 0;
-        LetterPipe cCorrectPos = null;
-        LetterPipe cCorrectLetter = null;
-        Debug.Log(word);
-        foreach (LetterPipe pipe in GetComponentsInChildren<LetterPipe>()) {
-            if (pipe.letter != word[i].ToString()) {
-                cCorrectPos = pipe;
-            }
-            if (cCorrectPos) {
-                cCorrectLetter = pipe;
-            }
-            i++;
-        }
-        Debug.Log(cCorrectPos.letter + " " + cCorrectLetter.letter);
-    }
-
     void NextHint() {
         hintId = Random.Range(0, anagram.words.Length);
         //hintId = (hintId + 1) % anagram.words.Length;
     }
 
-    char[] DistinctLetters(Anagram anagram) {
+    char[] LettersArray(Anagram anagram, bool distinct) {
         string appended = "";
         foreach (string word in anagram.words) {
             appended += word;
         }
         appended += anagram.extra;
-        return appended.Distinct().ToArray();
+        return distinct ? appended.Distinct().ToArray() : appended.ToArray();
     }
+
+    public void ResetBlocks() {
+        foreach (LetterPipe pipe in GetComponentsInChildren<LetterPipe>()) {
+            pipe.SetBlock(false);
+            if(pipe.letter[0] == anagram.words[hintId][0]) {
+                pipe.BlinkLight();
+            }
+        }
+    }
+
 
 }

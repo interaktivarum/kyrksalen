@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Team : MonoBehaviour
+public class ChooseTeam : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -17,6 +17,7 @@ public class Team : MonoBehaviour
     }
 
     private void OnMouseDown() {
-        GetComponentInParent<ViewTeams>().OnTeamClick(this);
+        GetComponentInParent<ViewPipes>().UnloadView();
     }
+
 }

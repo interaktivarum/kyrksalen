@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class Views : MonoBehaviour
 {
 
     public TCPMessageHandler _mh;
 
+    public List<ViewBase> _views;
     int _viewId = 0;
+    public Image _fadeImage;
 
     // Start is called before the first frame update
     void Start()
@@ -24,14 +28,15 @@ public class Views : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space)) {
-            transform.GetChild(_viewId).GetComponentInChildren<ViewBase>().UnloadView();
+            GetCurrentView().UnloadView();
         }
     }
 
     void SetReferences() {
-        foreach(Transform child in transform) {
-            child.gameObject.SetActive(true);
-            child.GetComponent<ViewBase>().SetReferences();
+        foreach(ViewBase view in GetComponentsInChildren<ViewBase>(true)) {
+            view.gameObject.SetActive(true);
+            view.SetReferences();
+            _views.Add(view);
         }
     }
 
@@ -41,18 +46,32 @@ public class Views : MonoBehaviour
     }
 
     void LoadCurrentView() {
-        if (_viewId < transform.childCount) {
-            foreach (Transform view in transform) {
+        if (_viewId < transform.Find("Views").childCount) {
+            foreach (ViewBase view in _views) {
                 view.gameObject.SetActive(false);
             }
-            transform.GetChild(_viewId).GetComponentInChildren<ViewBase>().LoadView();
-            _mh.SendStringToServer("ViewLoaded:" + transform.GetChild(_viewId).name);
+            GetCurrentView().LoadView();
+            _mh.SendStringToServer("ViewLoaded:" + GetCurrentView().name);
         }
     }
 
+    ViewBase GetCurrentView() {
+        return _views[_viewId];
+    }
+
+    ViewBase GetView(int id) {
+        return _views[id];
+    }
+
     public void NextView() {
-        _viewId = (_viewId + 1) % transform.childCount;
-        LoadCurrentView();
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
+            .OnComplete(() => LoadView((_viewId + 1) % _views.Count)));
+        sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 0), 2));
+    }
+
+    public YieldInstruction FadeTo(int val) {
+        return _fadeImage.DOColor(new Color(0, 0, 0, val), 2).WaitForCompletion();
     }
 
     public void RestartCallback(string args) {

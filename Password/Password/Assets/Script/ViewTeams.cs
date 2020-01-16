@@ -17,11 +17,12 @@ public class ViewTeams : ViewBase
     {
     }
 
-    public void onTeamClick(Team team) {
+    public void OnTeamClick(Team team) {
         int id = 0;
         foreach (Team t in GetComponentsInChildren<Team>()) {
             if (t == team) {
                 teamIdSelected = id;
+                views._mh.SendStringToServer("TeamSelected:" + id);
                 break;
             }
             id++;

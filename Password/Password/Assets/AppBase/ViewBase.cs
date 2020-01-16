@@ -20,7 +20,7 @@ public class ViewBase : MonoBehaviour
     }
 
     public virtual void UnloadView(string args) {
-        gameObject.GetComponentInParent<Views>().NextView();
+        views.NextView();
     }
 
 }

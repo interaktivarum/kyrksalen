@@ -30,6 +30,10 @@ public class LetterInput : MonoBehaviour
         }
     }
 
+    public void ClearPassword() {
+        password = "";
+    }
+
     private void OnTriggerEnter(Collider other) {
         LetterSphere ls = other.gameObject.GetComponent<LetterSphere>();
         if (!_isOpen) {
@@ -57,26 +61,11 @@ public class LetterInput : MonoBehaviour
         password = "";
         _isOpen = false;
         cap.transform.DOLocalMoveX(-0.5f, 1);
-        //light.DOIntensity(1, 1);
-        Color c = new Color(0.1f, 0.2f, 1);
-        globalLight.DOColor(c, 2);
-        background.DOColor(c, 2);
+        GetComponentInParent<ViewPipes>().NewTry();
     }
 
     void InputFinished() {
         GetComponentInParent<ViewPipes>().InputFinished(password);
-        
-        /*Color c = correct ? Color.green : Color.red;
-
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(globalLight.DOIntensity(0,2));
-        sequence.Append(globalLight.DOColor(c, 0));
-        sequence.Append(globalLight.DOIntensity(3, 2));
-
-        Sequence sequence2 = DOTween.Sequence();
-        sequence2.Append(background.DOColor(Color.gray, 2));
-        sequence2.Append(background.DOColor(c, 2));*/
-        //background.DOColor(c, 3);
     }
 
 }

@@ -11,6 +11,8 @@ public class LetterPipe : MonoBehaviour {
     public float bounceDelay;
     private GameObject _sphere = null;
     private bool _creatingLetter = false;
+    private bool _block;
+    bool _doDestroy;
 
     private TCPMessageHandler _mh;
 
@@ -19,7 +21,7 @@ public class LetterPipe : MonoBehaviour {
         _mh = FindObjectOfType<TCPMessageHandler>();
         GetComponentInChildren<TextMesh>().text = letter.ToUpper();
 
-        //StartCoroutine(BounceLoop());
+        StartCoroutine(BounceLoop());
 
     }
 
@@ -40,46 +42,25 @@ public class LetterPipe : MonoBehaviour {
 
     void OnMouseDown() {
         //InitSphere();
-        DropSphere2();
-        _mh.SendStringToServer("LetterSelected:" + letter);
-    }
-
-    /*void InitSphere () {
-        _sphere = Instantiate(letterSpherePrefab, transform);
-        _sphere.GetComponentInChildren<TextMesh>().text = letter.ToUpper();
-        _creatingLetter = false;
-    }
-
-    void DropSphere () {
-        if (_sphere) {
-            Transform freeSpheresContainer = GetComponentInParent<LetterPipes>().freeSpheresContainer.transform;
-            GameObject sphere = Instantiate(_sphere, freeSpheresContainer, true);
-            sphere.transform.position = _sphere.transform.position;
-            sphere.GetComponentInChildren<Rigidbody>().useGravity = true;
-            sphere.GetComponent<SphereCollider>().enabled = true;
-            
-            Destroy(_sphere);
-            _sphere = null;
+        if (!_block) {
+            DropSphere();
+            _mh.SendStringToServer("LetterSelected:" + letter);
         }
-    }*/
+    }
 
-    void DropSphere2() {
-        //if (_sphere) {
+    void DropSphere() {
         Transform freeSpheresContainer = GetComponentInParent<LetterPipes>().freeSpheresContainer.transform;
         GameObject sphere = Instantiate(letterSpherePrefab, freeSpheresContainer, true);
         sphere.transform.position = transform.position + new Vector3(0,0,0);
         sphere.GetComponentInChildren<Rigidbody>().useGravity = true;
         sphere.GetComponent<SphereCollider>().enabled = true;
         sphere.GetComponentInChildren<TextMesh>().text = letter.ToUpper();
-        //Destroy(_sphere);
-        //_sphere = null;
-        //}
+        SetBlock(true);
     }
-
 
     IEnumerator BounceLoop() {
         while (true) {
-            if (_sphere && !_creatingLetter) {
+            if (!_doDestroy) {
                 Bounce();
             }
             yield return new WaitForSeconds(10);
@@ -89,22 +70,36 @@ public class LetterPipe : MonoBehaviour {
     void Bounce() {
         Sequence sequence = DOTween.Sequence();
         sequence.SetDelay(bounceDelay);
-        sequence.Append(transform.DOLocalMoveY(0.1f, 0.5f));
+        sequence.Append(transform.DOLocalMoveY(-0.1f, 0.5f));
         sequence.Append(transform.DOLocalMoveY(0, 1f));
     }
 
     public void AnimateTo(Vector3 pos) {
         Sequence sequence = DOTween.Sequence();
-        sequence.AppendInterval(5);
+        sequence.SetDelay(5);
         sequence.Append(transform.DOLocalMove(pos, 3f));
     }
 
     public void Destroy() {
+        _doDestroy = true;
         Sequence sequence = DOTween.Sequence();
-        sequence.AppendInterval(5);
+        sequence.SetDelay(5);
         sequence.Append(transform.DOLocalMoveY(1, 3f));
-        sequence.OnComplete(
-            () => Destroy(this.gameObject));
+        sequence
+            .OnComplete(() => Destroy(this.gameObject));
+    }
+
+    public void SetBlock(bool b) {
+        _block = b;
+        GetComponentInChildren<TextMesh>().color = _block ? Color.black : Color.white;
+    }
+
+    public void BlinkLight() {
+        Light light = GetComponentInChildren<Light>();
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(light.DOIntensity(5, 2));
+        sequence.SetDelay(1);
+        sequence.Append(light.DOIntensity(0,2));
     }
 
 }
