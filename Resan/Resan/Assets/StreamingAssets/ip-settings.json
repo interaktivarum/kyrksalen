@@ -1,5 +1,6 @@
 {
   "ip": "100.66.243.45",
   "port": 8080,
-  "autoconnect":  false
+  "ping": "ping:1",
+  "autoconnect": false
 }

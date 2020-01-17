@@ -92,13 +92,27 @@ public class PickableItem : MonoBehaviour {
     }
 
     void AreaDropTest() {
-        if (_hoverDropArea && _dropArea.HasFreeSlot()) {
-            Vector3 pos = _dropArea.AddItem(this);
+        if (_hoverDropArea) {
+            ItemSlot slot = _dropArea.AddItem(this);
+            if (slot != null) {
+                MoveToSlot(slot);
+            }
+            else {
+                MoveToPickupPos();
+            }
         }
     }
 
     void AreaPickupTest() {
         _dropArea.RemoveItem(this);
+    }
+
+    void MoveToSlot(ItemSlot slot) {
+        transform.DOLocalMove(slot.position, 1);
+    }
+
+    void MoveToPickupPos() {
+        transform.DOLocalMove(_pickupPos, 1);
     }
 
 }

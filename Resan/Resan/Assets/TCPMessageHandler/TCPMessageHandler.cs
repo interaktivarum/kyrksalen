@@ -9,6 +9,7 @@ public class IPSettings {
     public string ip;
     public int port;
     public bool autoconnect;
+    public string ping;
 }
 
 [System.Serializable]
@@ -42,6 +43,8 @@ public class TCPMessageHandler : MonoBehaviour
     Server _server;
     public IPSettings settings;
     public char separator = ' ';
+    public char prependString = ' ';
+    public char appendString = ' ';
 
     public delegate void CallbackDelegate(string msg); // This defines what type of method you're going to call.
 
@@ -90,7 +93,7 @@ public class TCPMessageHandler : MonoBehaviour
             }
             else {
                 _ClientMessageSelfEvent.Invoke("Handler: Ping server");
-                SendStringToServer("ping");
+                SendStringToServer(settings.ping);
             }
             yield return new WaitForSeconds(10);
         }
@@ -155,10 +158,8 @@ public class TCPMessageHandler : MonoBehaviour
         if (File.Exists(filePath)) {
             // Read the json from the file into a string
             string dataAsJson = File.ReadAllText(filePath);
-            Debug.Log(dataAsJson);
             // Pass the json to JsonUtility, and tell it to create a GameData object from it
             settings = JsonUtility.FromJson<IPSettings>(dataAsJson);
-            Debug.Log(settings.autoconnect);
         }
         else {
             Debug.LogError("Cannot load json data!");
@@ -181,7 +182,7 @@ public class TCPMessageHandler : MonoBehaviour
 
     public void SendStringToServer(string str) {
         if (_client.IsConnected()) {
-            _client.SendStringToServer(str);
+            _client.SendStringToServer((prependString + str + appendString).Trim());
         }
     }
 
@@ -213,7 +214,7 @@ public class TCPMessageHandler : MonoBehaviour
     }
 
     public void SendStringToClient(string str) {
-        _server.SendString(str);
+        _server.SendStringToClient((prependString + str + appendString).Trim());
     }
 
     #endregion

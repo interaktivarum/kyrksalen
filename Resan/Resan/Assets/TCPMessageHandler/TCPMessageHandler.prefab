@@ -136,7 +136,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd041fad9e1673a47a838d3a259e2517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoConnect: 0
+  settings:
+    ip: 
+    port: 0
+    autoconnect: 0
+    ping: 
+  separator: 32
+  prependString: 123
+  appendString: 125
   _ClientMessageSelfEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -145,10 +152,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: MsgEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  _ClientStringSentEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: StrEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   _ClientMessageReceivedEvent:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: MsgEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  _ClientStringReceivedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: StrEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   _ServerMessageSelfEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -157,7 +172,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: MsgEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  _ServerStringSentEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: StrEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   _ServerMessageReceivedEvent:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: MsgEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  _ServerStringReceivedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: StrEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
