@@ -38,6 +38,7 @@ public class ViewProfiles : ViewBase
                 if (p == pHit) {
                     _selected = true;
                     p.Choose();
+                    views.Dim();
                     viewMenu.GetComponent<ViewMenu>().SetCourses(p.courses);
                     _mh.SendStringToServer("ChildSelected:" + iP);
                 }
@@ -57,10 +58,10 @@ public class ViewProfiles : ViewBase
         }
     }
 
-    public override void UnloadView(string args) {
+    /*public override void UnloadView(string args) {
         //base.UnloadView(args);
         StartCoroutine(UnloadProfiles());
-    }
+    }*/
 
     IEnumerator UnloadProfiles() {
         YieldInstruction yi = null;

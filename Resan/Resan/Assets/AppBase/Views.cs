@@ -21,7 +21,8 @@ public class Views : MonoBehaviour
 
         SetReferences();
 
-        Restart();
+        LoadView(0);
+        //Restart();
     }
 
     // Update is called once per frame
@@ -38,6 +39,13 @@ public class Views : MonoBehaviour
             view.SetReferences();
             _views.Add(view);
         }
+    }
+
+    void FadeToView(int id) {
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
+            .OnComplete(() => LoadView(id)));
+        sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 0), 2));
     }
 
     void LoadView(int id) {
@@ -64,10 +72,7 @@ public class Views : MonoBehaviour
     }
 
     public void NextView() {
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
-            .OnComplete(() => LoadView((_viewId + 1) % _views.Count)));
-        sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 0), 2));
+        FadeToView((_viewId + 1) % _views.Count);
     }
 
     public YieldInstruction FadeTo(int val) {
@@ -79,7 +84,7 @@ public class Views : MonoBehaviour
     }
 
     public void Restart() {
-        LoadView(0);
+        FadeToView(0);
     }
 
 }

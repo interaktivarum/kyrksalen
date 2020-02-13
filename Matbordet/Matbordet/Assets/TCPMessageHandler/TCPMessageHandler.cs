@@ -45,6 +45,7 @@ public class TCPMessageHandler : MonoBehaviour
     public char separator = ' ';
     public char prependString = ' ';
     public char appendString = ' ';
+    public KeyCode keyConnect;
 
     public delegate void CallbackDelegate(string msg); // This defines what type of method you're going to call.
 
@@ -82,6 +83,11 @@ public class TCPMessageHandler : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
+        if (Input.GetKeyDown(keyConnect)) {
+            if (!_client.IsConnected()) {
+                StartClient();
+            }
+        }
     }
 
     private IEnumerator NetworkCoroutine() {
@@ -174,15 +180,23 @@ public class TCPMessageHandler : MonoBehaviour
         SendMessageToServer(msg);
     }
 
-    public void SendMessageToServer(JsonMessage msg) {
+    public bool SendMessageToServer(JsonMessage msg) {
         if (_client.IsConnected()) {
             _client.SendMessageToServer(msg);
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
-    public void SendStringToServer(string str) {
+    public bool SendStringToServer(string str) {
         if (_client.IsConnected()) {
             _client.SendStringToServer((prependString + str + appendString).Trim());
+            return true;
+        }
+        else {
+            return false;
         }
     }
 

@@ -3706,6 +3706,11 @@ PrefabInstance:
       propertyPath: port
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4576437747065960669, guid: 0b33611a0657b9248be875640a6b97a6,
+        type: 3}
+      propertyPath: keyConnect
+      value: 277
+      objectReference: {fileID: 0}
     - target: {fileID: 4576437747065960668, guid: 0b33611a0657b9248be875640a6b97a6,
         type: 3}
       propertyPath: m_LocalPosition.x

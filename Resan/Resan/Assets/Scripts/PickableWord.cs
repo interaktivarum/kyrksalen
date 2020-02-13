@@ -8,7 +8,7 @@ public class PickableWord : MonoBehaviour
     Vector3 _pickupPos;
     Vector3 _pickupRot;
     bool _draggable = true;
-    DropAreaWord _daDrag;
+    DropAreaWord _dropAreaHover;
     //bool _correctDrop;
 
     // Start is called before the first frame update
@@ -51,11 +51,11 @@ public class PickableWord : MonoBehaviour
 
         hits = Physics.RaycastAll(Camera.main.ScreenPointToRay(input));
 
-        DropAreaWord dropAreaPrev = _daDrag;
-        _daDrag = null;
+        DropAreaWord dropAreaPrev = _dropAreaHover;
+        _dropAreaHover = null;
         foreach (RaycastHit hit in hits) {
-            _daDrag = hit.transform.gameObject.GetComponent<DropAreaWord>();
-            if (_daDrag) {
+            _dropAreaHover = hit.transform.gameObject.GetComponent<DropAreaWord>();
+            if (_dropAreaHover) {
                 DragTest();
                 break;
             }
@@ -64,26 +64,26 @@ public class PickableWord : MonoBehaviour
     }
 
     public void DragTest() {
-        transform.DOLocalMove(_daDrag.transform.localPosition, 0.1f);
+        transform.DOLocalMove(_dropAreaHover.transform.localPosition, 0.1f);
     }
 
     public void EnterDropAreaTest(DropAreaWord prev) {
-        if (_daDrag && _daDrag != prev) { //if enter drop area
-            transform.DOLocalRotate(_daDrag.transform.localEulerAngles, 0.25f);
-            Color c = DroppableArea(_daDrag) ? Color.green : Color.red;
+        if (_dropAreaHover && _dropAreaHover != prev) { //if enter drop area
+            transform.DOLocalRotate(_dropAreaHover.transform.localEulerAngles, 0.25f);
+            Color c = DroppableArea(_dropAreaHover) ? Color.green : Color.red;
             GetComponent<SpriteRenderer>().DOColor(c, 0.25f);
         }
-        else if (prev && !_daDrag) { //if leave drop area
+        else if (prev && !_dropAreaHover) { //if leave drop area
             transform.DOLocalRotate(_pickupRot, 0.25f);
             GetComponent<SpriteRenderer>().color = Color.white;
         }
     }
 
     void AreaDropTest() {
-        if (_daDrag) {
-            if (DroppableArea(_daDrag)) {
+        if (_dropAreaHover) {
+            if (DroppableArea(_dropAreaHover)) {
                 _draggable = false;
-                _daDrag.SetSolved(true);
+                _dropAreaHover.SetSolved(true);
             }
             else {
                 transform.DOLocalMove(_pickupPos, 0.5f);

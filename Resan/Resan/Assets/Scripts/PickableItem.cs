@@ -9,14 +9,17 @@ public class PickableItem : MonoBehaviour {
 
     Vector3 _pickupPos;
     bool _draggable = true;
-    bool _correctDrop;
+    //bool _correctDrop;
     DropAreaItems _dropArea;
-    bool _hoverDropArea;
+    bool _hoveringDropArea;
+
+    ViewGame _view;
 
     // Start is called before the first frame update
     void Start() {
         GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.9f, 0.9f);
         _dropArea = FindObjectOfType<DropAreaItems>();
+        _view = GetComponentInParent<ViewGame>();
     }
 
     // Update is called once per frame
@@ -27,7 +30,7 @@ public class PickableItem : MonoBehaviour {
     private void OnMouseDown() {
         SetDropAreaState(true);
         AreaPickupTest();
-        _hoverDropArea = false;
+        _hoveringDropArea = false;
         GetComponent<SpriteRenderer>().sortingOrder += 1;
 
         if (_draggable) {
@@ -40,9 +43,6 @@ public class PickableItem : MonoBehaviour {
     private void OnMouseUp() {
         SetDropAreaState(false);
         AreaDropTest();
-        /*if (!_daDrop) {
-            transform.DOLocalMove(_pickupPos, 0.5f);
-        }*/
         GetComponent<SpriteRenderer>().sortingOrder -= 1;
         GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.9f, 0.9f);
     }
@@ -61,11 +61,11 @@ public class PickableItem : MonoBehaviour {
 
         hits = Physics.RaycastAll(Camera.main.ScreenPointToRay(input));
 
-        bool hoverDropAreaPrev = _hoverDropArea;
-        _hoverDropArea = false;
+        bool hoverDropAreaPrev = _hoveringDropArea;
+        _hoveringDropArea = false;
         foreach (RaycastHit hit in hits) {
-            _hoverDropArea = hit.transform.gameObject.GetComponent<DropAreaItems>();
-            if (_hoverDropArea) {
+            _hoveringDropArea = hit.transform.gameObject.GetComponent<DropAreaItems>();
+            if (_hoveringDropArea) {
                 pos += (_dropArea.transform.position - transform.position) / 8;
                 break;
             }
@@ -78,11 +78,11 @@ public class PickableItem : MonoBehaviour {
 
     public void EnterDropAreaTest(bool prev) {
 
-        if (_hoverDropArea && !prev) { //if enter drop area
+        if (_hoveringDropArea && !prev) { //if enter drop area
             Color c = _dropArea.HasFreeSlot() ? Color.green : Color.red;
-            GetComponent<SpriteRenderer>().DOColor(c, 0.25f);
+            GetComponent<SpriteRenderer>().color = c;
         }
-        else if (prev && !_hoverDropArea) { //if leave drop area
+        else if (prev && !_hoveringDropArea) { //if leave drop area
             GetComponent<SpriteRenderer>().color = Color.white;
         }
     }
@@ -92,12 +92,14 @@ public class PickableItem : MonoBehaviour {
     }
 
     void AreaDropTest() {
-        if (_hoverDropArea) {
+        if (_hoveringDropArea) {
             ItemSlot slot = _dropArea.AddItem(this);
             if (slot != null) {
+                _view.SendStringToServer("ItemPacked:" + name);
                 MoveToSlot(slot);
             }
             else {
+                _view.SendStringToServer("ItemRejected:" + name);
                 MoveToPickupPos();
             }
         }

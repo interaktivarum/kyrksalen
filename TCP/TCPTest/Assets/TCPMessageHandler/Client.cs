@@ -3,6 +3,8 @@ using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +24,7 @@ public class Client : MonoBehaviour {
     private string m_receivedMessage = "";
     private IEnumerator m_ServerComCoroutine = null;
     bool _isReading;
+    Task _connectTask = null;
     #endregion
 
     TCPMessageHandler _messageHandler;
@@ -46,35 +49,51 @@ public class Client : MonoBehaviour {
     public void StartClient() {
 
         //Early out
-        if (m_client != null) {
+        /*if (m_client != null) {
             return;
+        }*/
+
+        //Create new client
+        if (m_client == null) {
+            m_client = new TcpClient();
         }
 
         _messageHandler._ClientMessageSelfEvent.Invoke("Try to connect to server");
+        _connectTask = m_client.ConnectAsync(ipAddress, port);
 
-        try {
-            //Create new client
-            m_client = new TcpClient();
+        /*try {
             //Set and enable client
             m_client.Connect(ipAddress, port);
             _messageHandler._ClientMessageSelfEvent.Invoke("Connected to server");
         }
         catch (SocketException) {
+            Debug.Log("Fel");
             CloseConnection();
             m_client = null;
             _messageHandler._ClientMessageSelfEvent.Invoke("Could not connect to server");
-        }
+        }*/
+        
     }
 
     //Check if the client has been recived something
     private void Update() {
 
-        //If some client stablish connection
-        if (m_client != null && m_ServerComCoroutine == null) {
-            //Start the ClientCommunication coroutine
-            m_ServerComCoroutine = ServerCommunication();
-            StartCoroutine(m_ServerComCoroutine);            
-        }
+        if(_connectTask != null && _connectTask.IsCompleted) {
+            if(_connectTask.Status != TaskStatus.Faulted){
+                if (m_client != null && m_ServerComCoroutine == null) {
+
+                    _messageHandler._ClientMessageSelfEvent.Invoke("Connected to server");
+
+                    //Start the ClientCommunication coroutine
+                    m_ServerComCoroutine = ServerCommunication();
+                    StartCoroutine(m_ServerComCoroutine);
+                }
+            }
+            else {
+                _messageHandler._ClientMessageSelfEvent.Invoke("Could not connect to server");
+            }
+            _connectTask = null;
+        }       
 
     }
 

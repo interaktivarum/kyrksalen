@@ -6,7 +6,7 @@ public class ViewMenu : ViewBase {
 
     public string serverName;
     public FoodCourse[] courses;
-    
+    bool _lock = false;
     //private int _courseId = 0;
     //public Transform objTransforms;
 
@@ -22,6 +22,7 @@ public class ViewMenu : ViewBase {
     {
         _mh = FindObjectOfType<TCPMessageHandler>();
         _mh.AddCallback("UnloadView:"+name, UnloadView);
+        _mh.AddCallback("DishMovieFinished", Unlock);
     }
 
     private void OnEnable() {
@@ -34,46 +35,56 @@ public class ViewMenu : ViewBase {
     }
 
     public void DishHit(FoodDish dish) {
-        int iC = 0;
-        foreach (FoodCourse c in courses) {
+        if (!IsLocked()) {
+            int iC = 0;
+            foreach (FoodCourse c in courses) {
 
-            bool courseHasDish = false;
-            foreach (FoodDish d in c.dishes) {
-                if (d == dish) {
-                    courseHasDish = true;
-                }
-            }
-
-            if (courseHasDish) {
-
-                int iD = 0;
+                bool courseHasDish = false;
                 foreach (FoodDish d in c.dishes) {
-                    if (dish == d) {
-                        d.Select();
-                        _mh.SendStringToServer("Dish" + iC + "Selected:" + iD);
-                        c.correctSelected = dish == c.correct;
-                        //_courseId++;
+                    if (d == dish) {
+                        courseHasDish = true;
                     }
-                    else {
-                        if (dish == c.correct) {
-                            d.Disappear();
+                }
+
+                if (courseHasDish) {
+
+                    int iD = 0;
+                    foreach (FoodDish d in c.dishes) {
+                        if (dish == d) {
+                            d.Select();
+                            if (dish == c.correct) {
+                                c.correctSelected = true;
+                                dish.SelectCorrect();
+                            }
+                            /*else {
+                                //d.Select();
+                            }*/
+                            if (_mh.SendStringToServer("Dish" + iC + "Selected:" + iD)) {
+                                Lock();
+                            }
                         }
                         else {
-                            d.Deselect();
+                            if (dish == c.correct) {
+                                d.Disappear();
+                            }
+                            /*else {
+                                d.Deselect();
+                            }*/
                         }
+                        iD++;
                     }
-                    iD++;
+                    if (AllCorrectSelected()) {
+                        _mh.SendStringToServer("AllDishesSelected:1");
+                    }
                 }
-                if (AllCorrectSelected()) {
-                    _mh.SendStringToServer("AllDishesSelected:1");
-                }
-            }
 
-            iC++;
+                iC++;
+            }
         }
     }
 
-    void LoadView() {
+    public override void LoadView() {
+        base.LoadView();
         foreach (FoodCourse c in courses) {
             foreach (FoodDish d in c.dishes) {
                 d.gameObject.SetActive(true);
@@ -125,6 +136,20 @@ public class ViewMenu : ViewBase {
             }
         }
         return allCorrectSelected;
+    }
+
+    void Lock() {
+        views.Dim();
+        _lock = true;
+    }
+
+    void Unlock(string args) {
+        views.ResetFade();
+        _lock = false;
+    }
+
+    public bool IsLocked() {
+        return _lock;
     }
 
 }
