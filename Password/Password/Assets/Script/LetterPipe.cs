@@ -97,7 +97,7 @@ public class LetterPipe : MonoBehaviour {
     public void BlinkLight() {
         Light light = GetComponentInChildren<Light>();
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(light.DOIntensity(5, 2));
+        sequence.Append(light.DOIntensity(3, 2));
         sequence.SetDelay(1);
         sequence.Append(light.DOIntensity(0,2));
     }

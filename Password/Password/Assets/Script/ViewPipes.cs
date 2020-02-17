@@ -90,7 +90,7 @@ public class ViewPipes : ViewBase {
     }
 
     YieldInstruction ResetSceneColors() {
-        Color c = new Color(0.1f, 0.2f, 1);
+        Color c = new Color(0.3f, 0.4f, 1);
         globalLight.DOColor(c, 2);
         return background.DOColor(c, 2).WaitForCompletion();
     }
