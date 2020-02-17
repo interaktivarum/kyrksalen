@@ -32,7 +32,10 @@ public class PickableWord : MonoBehaviour
 
     private void OnMouseUp() {
         GetComponent<SpriteRenderer>().color = Color.white;
-        AreaDropTest();
+        bool droppedInWordArea = AreaDropTest();
+        if (!droppedInWordArea) {
+            RejectTest();
+        }
     }
 
     private void OnMouseDrag() {
@@ -70,8 +73,7 @@ public class PickableWord : MonoBehaviour
     public void EnterDropAreaTest(DropAreaWord prev) {
         if (_dropAreaHover && _dropAreaHover != prev) { //if enter drop area
             transform.DOLocalRotate(_dropAreaHover.transform.localEulerAngles, 0.25f);
-            Color c = DroppableArea(_dropAreaHover) ? Color.green : Color.red;
-            GetComponent<SpriteRenderer>().DOColor(c, 0.25f);
+            GetComponent<SpriteRenderer>().color = DroppableArea(_dropAreaHover) ? Color.green : Color.red;
         }
         else if (prev && !_dropAreaHover) { //if leave drop area
             transform.DOLocalRotate(_pickupRot, 0.25f);
@@ -79,20 +81,37 @@ public class PickableWord : MonoBehaviour
         }
     }
 
-    void AreaDropTest() {
+    bool AreaDropTest() {
         if (_dropAreaHover) {
             if (DroppableArea(_dropAreaHover)) {
                 _draggable = false;
                 _dropAreaHover.SetSolved(true);
             }
             else {
-                transform.DOLocalMove(_pickupPos, 0.5f);
-                transform.DOLocalRotate(_pickupRot, 0.25f);
+                ReturnToPickup();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool RejectTest() {
+        RaycastHit[] hits = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition));
+        foreach (RaycastHit hit in hits) {
+            if (hit.transform.gameObject.GetComponent<DropAreaReject>()) {
+                ReturnToPickup();
+                return true;
             }
         }
+        return false;
     }
 
     void AreaPickupTest() {
+    }
+
+    void ReturnToPickup() {
+        transform.DOLocalMove(_pickupPos, 0.5f);
+        transform.DOLocalRotate(_pickupRot, 0.25f);
     }
 
     bool DroppableArea(DropAreaWord dropArea) {

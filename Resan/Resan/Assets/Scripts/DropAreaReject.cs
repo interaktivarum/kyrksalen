@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChooseTeam : MonoBehaviour
+public class DropAreaReject : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -15,9 +15,4 @@ public class ChooseTeam : MonoBehaviour
     {
         
     }
-
-    private void OnMouseDown() {
-        GetComponentInParent<ViewPipes>().views.Restart();
-    }
-
 }

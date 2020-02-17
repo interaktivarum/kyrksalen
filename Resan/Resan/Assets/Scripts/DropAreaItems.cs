@@ -5,6 +5,8 @@ using DG.Tweening;
 
 public class DropAreaItems : MonoBehaviour {
 
+    ViewPack _view;
+
     public int cols = 3;
     public int rows = 2; 
     //public List<PickableItem> items;
@@ -12,6 +14,7 @@ public class DropAreaItems : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        _view = GetComponentInParent<ViewPack>();
         PopulateSlots();
     }
 
@@ -42,8 +45,10 @@ public class DropAreaItems : MonoBehaviour {
     public ItemSlot AddItem(PickableItem item) {
         ItemSlot slot = GetClosestEmptySlot(item.transform.position);
         if (slot != null) {
+            _view.SendStringToServer("ItemPacked:" + item.name);
             slot.AddItem(item);
         }
+        _view.ItemPacked();
         return slot;
     }
 

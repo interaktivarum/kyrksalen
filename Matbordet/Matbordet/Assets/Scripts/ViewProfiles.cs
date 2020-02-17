@@ -19,7 +19,7 @@ public class ViewProfiles : ViewBase
     // Start is called before the first frame update
     void Start() {
         _mh = GameObject.FindObjectOfType<TCPMessageHandler>();
-        _mh.AddCallback("UnloadView:"+name, UnloadView);
+        _mh.AddCallback("UnloadView", UnloadView);
     }
 
     private void OnEnable() {
@@ -59,8 +59,8 @@ public class ViewProfiles : ViewBase
     }
 
     /*public override void UnloadView(string args) {
-        //base.UnloadView(args);
-        StartCoroutine(UnloadProfiles());
+        base.UnloadView(args);
+        //StartCoroutine(UnloadProfiles());
     }*/
 
     IEnumerator UnloadProfiles() {
@@ -71,7 +71,7 @@ public class ViewProfiles : ViewBase
             }
         }
         yield return yi; //Note! Only the last animation counts
-        gameObject.GetComponentInParent<Views>().NextView();
+        views.NextView();
 
     }
 }

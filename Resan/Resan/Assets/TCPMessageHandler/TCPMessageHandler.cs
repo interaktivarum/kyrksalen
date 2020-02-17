@@ -180,15 +180,23 @@ public class TCPMessageHandler : MonoBehaviour
         SendMessageToServer(msg);
     }
 
-    public void SendMessageToServer(JsonMessage msg) {
+    public bool SendMessageToServer(JsonMessage msg) {
         if (_client.IsConnected()) {
             _client.SendMessageToServer(msg);
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
-    public void SendStringToServer(string str) {
+    public bool SendStringToServer(string str) {
         if (_client.IsConnected()) {
             _client.SendStringToServer((prependString + str + appendString).Trim());
+            return true;
+        }
+        else {
+            return false;
         }
     }
 

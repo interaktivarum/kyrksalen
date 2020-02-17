@@ -105,11 +105,8 @@ public class ViewPipes : ViewBase {
         UnloadView();
     }
 
-    public override void UnloadView() {
-
-        
-
+    /*public override void UnloadView() {
         base.UnloadView();
-    }
+    }*/
 
 }

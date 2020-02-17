@@ -13,13 +13,13 @@ public class PickableItem : MonoBehaviour {
     DropAreaItems _dropArea;
     bool _hoveringDropArea;
 
-    ViewGame _view;
+    ViewPack _view;
 
     // Start is called before the first frame update
     void Start() {
         GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.9f, 0.9f);
         _dropArea = FindObjectOfType<DropAreaItems>();
-        _view = GetComponentInParent<ViewGame>();
+        _view = GetComponentInParent<ViewPack>();
     }
 
     // Update is called once per frame

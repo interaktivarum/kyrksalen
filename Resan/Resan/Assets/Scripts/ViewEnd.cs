@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 
-public class ViewIntroMovie : ViewBase
+public class ViewEnd : ViewBase
 {
 
     VideoPlayer _video;
@@ -46,8 +46,7 @@ public class ViewIntroMovie : ViewBase
     }
 
     public override void UnloadView() {
-        _video.Stop();
-        
+        _video.Stop();   
         base.UnloadView();
     }
 

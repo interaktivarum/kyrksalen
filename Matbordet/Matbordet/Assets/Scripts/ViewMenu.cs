@@ -21,7 +21,7 @@ public class ViewMenu : ViewBase {
     void Start()
     {
         _mh = FindObjectOfType<TCPMessageHandler>();
-        _mh.AddCallback("UnloadView:"+name, UnloadView);
+        _mh.AddCallback("UnloadView", UnloadView);
         _mh.AddCallback("DishMovieFinished", Unlock);
     }
 
@@ -108,7 +108,7 @@ public class ViewMenu : ViewBase {
             }
         }
         yield return yi; //Note! Only the last animation counts
-        gameObject.GetComponentInParent<Views>().NextView();
+        views.NextView();
 
     }
 

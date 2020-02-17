@@ -5,6 +5,7 @@ using UnityEngine;
 public class ViewBase : MonoBehaviour {
 
     public Views views;
+    public bool blockScreensaver = false;
     protected bool _unloading = false;
 
     public virtual void SetReferences() {

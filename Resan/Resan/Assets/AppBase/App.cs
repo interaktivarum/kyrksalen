@@ -35,15 +35,14 @@ public class App : MonoBehaviour
         }
     }
 
-    void SetInteraction() {
+    public void SetInteraction() {
         _timeLastInteraction = Time.fixedTime;
     }
 
     void RestartTest() {
-        if (Time.fixedTime - _timeLastInteraction > 30) {
-            _mh.SendStringToServer("Restart:NoInteraction");
+        if (Time.fixedTime - _timeLastInteraction > 60) {
             SetInteraction();
-            _views.Restart();
+            _views.RestartScreensaver();
         }
     }
 

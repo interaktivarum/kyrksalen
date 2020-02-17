@@ -24,10 +24,8 @@ public class App : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        if (!_views.IsStartView()) {
-            InteractionUpdate();
-            RestartTest();
-        }
+        InteractionUpdate();
+        RestartTest();
         QuitTest();
     }
 
@@ -42,10 +40,9 @@ public class App : MonoBehaviour
     }
 
     void RestartTest() {
-        if (Time.fixedTime - _timeLastInteraction > 30) {
-            _mh.SendStringToServer("Restart:NoInteraction");
+        if (Time.fixedTime - _timeLastInteraction > 60) {
             SetInteraction();
-            _views.Restart();
+            _views.RestartScreensaver();
         }
     }
 

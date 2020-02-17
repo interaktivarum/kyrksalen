@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
-public class Views : MonoBehaviour
-{
+public class Views : MonoBehaviour {
+
     public App _app;
     public TCPMessageHandler _mh;
 
@@ -15,36 +16,34 @@ public class Views : MonoBehaviour
     public Image _fadeImage;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         _app = FindObjectOfType<App>();
         _mh = FindObjectOfType<TCPMessageHandler>();
         _mh.AddCallback("Restart", RestartCallback);
+        _mh.AddCallback("UnloadView", UnloadCurrentView);
 
         SetReferences();
 
+        _fadeImage.color = Color.black;
         LoadView(0);
+        ResetFade();
+
         //Restart();
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         if (Input.GetKeyDown(KeyCode.Space)) {
             GetCurrentView().UnloadView();
         }
     }
 
     void SetReferences() {
-        foreach(ViewBase view in GetComponentsInChildren<ViewBase>(true)) {
+        foreach (ViewBase view in GetComponentsInChildren<ViewBase>(true)) {
             view.gameObject.SetActive(true);
             view.SetReferences();
             _views.Add(view);
         }
-    }
-
-    public bool IsStartView() {
-        return _viewId == 0;
     }
 
     void FadeToView(int id) {
@@ -70,6 +69,10 @@ public class Views : MonoBehaviour
         }
     }
 
+    void UnloadCurrentView(string args) {
+        GetCurrentView().UnloadView(args);
+    }
+
     ViewBase GetCurrentView() {
         return _views[_viewId];
     }
@@ -79,7 +82,13 @@ public class Views : MonoBehaviour
     }
 
     public void NextView() {
-        FadeToView((_viewId + 1) % _views.Count);
+        int id = (_viewId + 1) % _views.Count;
+        if (id == 0) {
+            Restart();
+        }
+        else {
+            FadeToView(id);
+        }
     }
 
     public YieldInstruction FadeTo(Color color, int duration = 2) {
@@ -99,11 +108,13 @@ public class Views : MonoBehaviour
     }
 
     public void Restart() {
-        FadeToView(0);
+        _fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
+            .OnComplete(() => SceneManager.LoadScene(SceneManager.GetActiveScene().name));
     }
 
     public void RestartScreensaver() {
-        if (!_blockScreensaver) {
+        if (!_blockScreensaver && !GetCurrentView().blockScreensaver) {
+            _mh.SendStringToServer("Restart:NoInteraction");
             Restart();
         }
     }
