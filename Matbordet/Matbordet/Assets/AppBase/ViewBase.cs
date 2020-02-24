@@ -17,13 +17,14 @@ public class ViewBase : MonoBehaviour {
         _unloading = false;
     }
 
-    public virtual void UnloadView() {
-        UnloadView("");
-    }
-
-    public virtual void UnloadView(string args) {
+    public IEnumerator UnloadView() {
+        yield return DoUnloadView();
         _unloading = true;
         views.NextView();
+    }
+
+    public virtual YieldInstruction DoUnloadView() {
+        return new YieldInstruction();
     }
 
     public void SendMessageToServer(JsonMessage msg) {

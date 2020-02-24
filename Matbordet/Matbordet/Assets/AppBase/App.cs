@@ -48,7 +48,7 @@ public class App : MonoBehaviour
 
     void QuitTest() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
-            _mh.SendStringToServer("ApplicationQuit");
+            _mh.SendStringToServer("App:Quit");
             Application.Quit();
         }
     }

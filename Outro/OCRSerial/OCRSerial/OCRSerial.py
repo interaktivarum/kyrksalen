@@ -21,19 +21,25 @@ def OCRSerial_file(imgDir,imgFilename):
    
 	# Get serial number
 	serial = ocr_serial_number(imgPath)
+	serial = serial.replace(" ", "")
 
-	# Copy and rename file
-	split = imgFilename.split('.')
-	filenameNew = split[0]+'_'+serial+'.'+split[1]
+	if serial == "":
+		os.remove(imgPath)
+		# Print error
+		print("Error: could not read serial number")
+	else:
+		# Copy and rename file
+		split = imgFilename.split('.')
+		filenameNew = split[0]+'_'+serial+'.'+split[1]
 
-	# Copy file to new folder
-	if not os.path.exists(folderTo):
-		os.makedirs(folderTo)
-	# os.rename(imgPath,folderTo+filenameNew)
-	move(imgPath, folderTo+filenameNew)
+		# Copy file to new folder
+		if not os.path.exists(folderTo):
+			os.makedirs(folderTo)
+		# os.rename(imgPath,folderTo+filenameNew)
+		move(imgPath, folderTo+filenameNew)
  
-	# Print serial number
-	print(filenameNew)
+		# Print serial number
+		print(filenameNew)
 
 def ocr_serial_number(imgFilename):
 

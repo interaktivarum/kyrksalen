@@ -6,7 +6,7 @@ public class ViewMenu : ViewBase {
 
     public string serverName;
     public FoodCourse[] courses;
-    bool _lock = false;
+    bool _lock;
     //private int _courseId = 0;
     //public Transform objTransforms;
 
@@ -21,12 +21,7 @@ public class ViewMenu : ViewBase {
     void Start()
     {
         _mh = FindObjectOfType<TCPMessageHandler>();
-        _mh.AddCallback("UnloadView", UnloadView);
         _mh.AddCallback("DishMovieFinished", Unlock);
-    }
-
-    private void OnEnable() {
-        LoadView();
     }
 
     // Update is called once per frame
@@ -85,7 +80,9 @@ public class ViewMenu : ViewBase {
 
     public override void LoadView() {
         base.LoadView();
+        Unlock("");
         foreach (FoodCourse c in courses) {
+            c.correctSelected = false;
             foreach (FoodDish d in c.dishes) {
                 d.gameObject.SetActive(true);
                 d.Appear();
@@ -93,12 +90,13 @@ public class ViewMenu : ViewBase {
         }
     }
 
-    public override void UnloadView(string args) {
+    /*public override void UnloadView() {
+        Debug.Log("Unload Profiles view");
         //base.UnloadView(args);
         StartCoroutine(UnloadMenu());
-    }
+    }*/
 
-    IEnumerator UnloadMenu() {
+    public override YieldInstruction DoUnloadView() {
         YieldInstruction yi = null;
         foreach (FoodCourse c in courses) {
             foreach (FoodDish d in c.dishes) {
@@ -107,9 +105,9 @@ public class ViewMenu : ViewBase {
                 }
             }
         }
-        yield return yi; //Note! Only the last animation counts
-        views.NextView();
-
+        return yi;
+        /*yield return yi; //Note! Only the last animation counts
+        base.UnloadView();*/
     }
 
     /*void LoadCourse(int id) {
@@ -130,7 +128,6 @@ public class ViewMenu : ViewBase {
     bool AllCorrectSelected() {
         bool allCorrectSelected = true;
         foreach (FoodCourse c in courses) {
-
             if (!c.correctSelected) {
                 allCorrectSelected = false;
             }

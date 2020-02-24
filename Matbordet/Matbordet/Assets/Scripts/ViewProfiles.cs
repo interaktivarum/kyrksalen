@@ -19,11 +19,6 @@ public class ViewProfiles : ViewBase
     // Start is called before the first frame update
     void Start() {
         _mh = GameObject.FindObjectOfType<TCPMessageHandler>();
-        _mh.AddCallback("UnloadView", UnloadView);
-    }
-
-    private void OnEnable() {
-        LoadView();
     }
 
     // Update is called once per frame
@@ -50,7 +45,8 @@ public class ViewProfiles : ViewBase
         }
     }
 
-    void LoadView() {
+    public override void LoadView() {
+        base.LoadView();
         _selected = false;
         foreach (Profile p in profiles) {
             p.gameObject.SetActive(true);
@@ -58,20 +54,18 @@ public class ViewProfiles : ViewBase
         }
     }
 
-    /*public override void UnloadView(string args) {
-        base.UnloadView(args);
-        //StartCoroutine(UnloadProfiles());
+    /*public override void UnloadView() {
+        Debug.Log("Unload Profiles view");
+        StartCoroutine(UnloadProfiles());
     }*/
 
-    IEnumerator UnloadProfiles() {
+    public override YieldInstruction DoUnloadView() {
         YieldInstruction yi = null;
         foreach (Profile p in profiles) {
             if (p.gameObject.activeSelf) {
                 yi = p.Disappear();
             }
         }
-        yield return yi; //Note! Only the last animation counts
-        views.NextView();
-
+        return yi; //Note! Only the last animation counts
     }
 }

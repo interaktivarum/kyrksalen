@@ -15,6 +15,12 @@ public class Views : MonoBehaviour {
     bool _blockScreensaver;
     public Image _fadeImage;
 
+    private void Awake() {
+        foreach (ViewBase view in GetComponentsInChildren<ViewBase>(true)) {
+            view.gameObject.SetActive(false);
+        }
+    }
+
     // Start is called before the first frame update
     void Start() {
         _app = FindObjectOfType<App>();
@@ -34,7 +40,7 @@ public class Views : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (Input.GetKeyDown(KeyCode.Space)) {
-            GetCurrentView().UnloadView();
+            UnloadCurrentView("");
         }
     }
 
@@ -70,7 +76,7 @@ public class Views : MonoBehaviour {
     }
 
     void UnloadCurrentView(string args) {
-        GetCurrentView().UnloadView(args);
+        StartCoroutine(GetCurrentView().UnloadView());
     }
 
     ViewBase GetCurrentView() {
@@ -108,13 +114,15 @@ public class Views : MonoBehaviour {
     }
 
     public void Restart() {
-        _fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
-            .OnComplete(() => SceneManager.LoadScene(SceneManager.GetActiveScene().name));
+        _mh.SendStringToServer("App:Restart");
+        FadeToView(0);
+        /*_fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
+            .OnComplete(() => SceneManager.LoadScene(SceneManager.GetActiveScene().name));*/
     }
 
     public void RestartScreensaver() {
         if (!_blockScreensaver && !GetCurrentView().blockScreensaver) {
-            _mh.SendStringToServer("Restart:NoInteraction");
+            _mh.SendStringToServer("App:NoInteraction");
             Restart();
         }
     }
