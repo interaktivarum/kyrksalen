@@ -18,6 +18,12 @@ public class DropAreaItems : MonoBehaviour {
         PopulateSlots();
     }
 
+    private void OnEnable() {
+        foreach (ItemSlot slot in _slots) {
+            slot.RemoveItem();
+        }
+    }
+
     // Update is called once per frame
     void Update() {
     }

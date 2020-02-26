@@ -5,15 +5,24 @@ using DG.Tweening;
 
 public class PickableWord : MonoBehaviour
 {
+    Vector3 _initPos;
     Vector3 _pickupPos;
     Vector3 _pickupRot;
     bool _draggable = true;
     DropAreaWord _dropAreaHover;
     //bool _correctDrop;
 
+    private void Awake() {
+        _initPos = transform.localPosition;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+    }
+
+    private void OnEnable() {
+        transform.localPosition = _initPos;
     }
 
     // Update is called once per frame

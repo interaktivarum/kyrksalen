@@ -5,6 +5,7 @@ using DG.Tweening;
 
 public class PickableItem : MonoBehaviour {
 
+    Vector3 _initPos;
     public bool _packable;
 
     Vector3 _pickupPos;
@@ -15,6 +16,10 @@ public class PickableItem : MonoBehaviour {
 
     ViewPack _view;
 
+    private void Awake() {
+        _initPos = transform.localPosition;
+    }
+
     // Start is called before the first frame update
     void Start() {
         GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.9f, 0.9f);
@@ -24,7 +29,10 @@ public class PickableItem : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+    }
 
+    private void OnEnable() {
+        transform.localPosition = _initPos;
     }
 
     private void OnMouseDown() {

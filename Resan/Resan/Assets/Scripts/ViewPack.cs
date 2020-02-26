@@ -15,14 +15,18 @@ public class ViewPack : ViewBase
 
     // Update is called once per frame
     void Update()
-    {
-        
+    { 
     }
 
     public void ItemPacked() {
         if (!_dropArea.HasFreeSlot()) {
             SendStringToServer("AllItemsPacked:1");
-            UnloadView();
+            InitUnloadView();
         }
     }
+
+    public override YieldInstruction DoUnloadView() {
+        return new WaitForSeconds(2);
+    }
+
 }

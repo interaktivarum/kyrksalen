@@ -6,13 +6,16 @@ using DG.Tweening;
 public class DropAreaWord : MonoBehaviour
 {
     ViewLetter _view;
-
     public bool _solved;
 
     // Start is called before the first frame update
     void Start()
     {
         _view = GetComponentInParent<ViewLetter>();
+    }
+
+    private void OnEnable() {
+        _solved = false;
     }
 
     // Update is called once per frame

@@ -28,7 +28,12 @@ public class ViewLetter : ViewBase
         }
         if (allSolved) {
             SendStringToServer("AllWordsSolved:1");
+            InitUnloadView();
         }
+    }
+
+    public override YieldInstruction DoUnloadView() {
+        return new WaitForSeconds(2);
     }
 
 }

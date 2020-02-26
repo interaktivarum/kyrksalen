@@ -45,14 +45,14 @@ public class ViewEnd : ViewBase
         _exitView = false;
     }
 
-    public override void UnloadView() {
-        _video.Stop();   
-        base.UnloadView();
+    public override YieldInstruction DoUnloadView() {
+        _video.Stop();
+        return null;
     }
 
     public void FinishedPlaying() {
         _exitView = true;
         SendStringToServer("IntroMovieFinished:true");
-        UnloadView();
+        InitUnloadView();
     }
 }

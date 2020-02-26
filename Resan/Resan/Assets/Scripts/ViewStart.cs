@@ -16,7 +16,7 @@ public class ViewStart : ViewBase
     // Update is called once per frame
     void Update() {
         if (Input.GetMouseButtonDown(0)) {
-            UnloadView();
+            InitUnloadView();
         }
     }
 
@@ -27,13 +27,14 @@ public class ViewStart : ViewBase
 
     public override void LoadView() {
         base.LoadView();
+        _video.isLooping = true;
         _video.frame = 0;
         _video.targetTexture.Release();
     }
 
-    public override void UnloadView() {
+    public override YieldInstruction DoUnloadView() {
         _video.Stop();
-        base.UnloadView();
+        return null;
     }
 
 }
