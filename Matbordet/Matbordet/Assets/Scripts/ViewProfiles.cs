@@ -33,9 +33,10 @@ public class ViewProfiles : ViewBase
                 if (p == pHit) {
                     _selected = true;
                     p.Choose();
-                    views.Dim();
+                    views.Dim(2, 2);
                     viewMenu.GetComponent<ViewMenu>().SetCourses(p.courses);
                     _mh.SendStringToServer("ChildSelected:" + iP);
+                    views.BlockScreensaver();
                 }
                 else {
                     p.Disappear();

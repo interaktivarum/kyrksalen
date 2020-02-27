@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class ViewMenu : ViewBase {
 
     public string serverName;
     public FoodCourse[] courses;
     bool _lock;
+    Image _bgText;
     //private int _courseId = 0;
     //public Transform objTransforms;
 
@@ -15,6 +18,7 @@ public class ViewMenu : ViewBase {
 
     private void Awake() {
         gameObject.SetActive(false);
+        _bgText = GetComponentInChildren<Canvas>().GetComponentsInChildren<Image>()[1];
     }
 
     // Start is called before the first frame update
@@ -24,9 +28,22 @@ public class ViewMenu : ViewBase {
         _mh.AddCallback("DishMovieFinished", Unlock);
     }
 
+    private void OnEnable() {
+        _lock = false;
+        HideBackground();
+    }
+
     // Update is called once per frame
     void Update()
     {
+    }
+
+    void SetBackground(int id) {
+        Transform t = GetComponentInChildren<Canvas>().transform;
+        for (int i = 0; i < t.childCount; i++) {
+            Image image = t.GetChild(i).GetComponent<Image>();
+            image.gameObject.SetActive(i == id);
+        }
     }
 
     public void DishHit(FoodDish dish) {
@@ -49,13 +66,17 @@ public class ViewMenu : ViewBase {
                             d.Select();
                             if (dish == c.correct) {
                                 c.correctSelected = true;
-                                dish.SelectCorrect();
+                                if (!AllCorrectSelected()) {
+                                    dish.SelectCorrect();
+                                } 
                             }
                             /*else {
                                 //d.Select();
                             }*/
                             if (_mh.SendStringToServer("Dish" + iC + "Selected:" + iD)) {
-                                Lock();
+                                if (!AllCorrectSelected()) {
+                                    Lock();
+                                }
                             }
                         }
                         else {
@@ -69,7 +90,9 @@ public class ViewMenu : ViewBase {
                         iD++;
                     }
                     if (AllCorrectSelected()) {
+                        Present();
                         _mh.SendStringToServer("AllDishesSelected:1");
+                        views.BlockScreensaver();
                     }
                 }
 
@@ -96,7 +119,7 @@ public class ViewMenu : ViewBase {
         StartCoroutine(UnloadMenu());
     }*/
 
-    public override YieldInstruction DoUnloadView() {
+    /*public override YieldInstruction DoUnloadView() {
         YieldInstruction yi = null;
         foreach (FoodCourse c in courses) {
             foreach (FoodDish d in c.dishes) {
@@ -106,9 +129,7 @@ public class ViewMenu : ViewBase {
             }
         }
         return yi;
-        /*yield return yi; //Note! Only the last animation counts
-        base.UnloadView();*/
-    }
+    }*/
 
     /*void LoadCourse(int id) {
         foreach (FoodDish d in courses[id].dishes) {
@@ -135,14 +156,35 @@ public class ViewMenu : ViewBase {
         return allCorrectSelected;
     }
 
+    void Present() {
+        _lock = true;
+        foreach (FoodCourse c in courses) {
+            c.correct.Present();
+        }
+        FadeBackground(1);// SetBackground(1);
+        views.Dim(2, 8);
+    }
+
+    void HideBackground() {
+        _bgText.color = new Color(1, 1, 1, 0);
+    }
+
+    void FadeBackground(int a = 1) {
+        Sequence seq = DOTween.Sequence();
+        seq.SetDelay(2);
+        seq.Append(_bgText.DOColor(new Color(1, 1, 1, a), 1));
+    }
+
     void Lock() {
-        views.Dim();
+        views.Dim(2,2);
         _lock = true;
     }
 
     void Unlock(string args) {
-        views.ResetFade();
-        _lock = false;
+        if (!AllCorrectSelected()) {
+            views.ResetFade();
+            _lock = false;
+        }
     }
 
     public bool IsLocked() {

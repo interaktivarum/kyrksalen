@@ -42,14 +42,14 @@ public class FoodDish : MonoBehaviour
 
     public void Appear() {
         transform.localPosition = _initPos;
-        transform.localRotation = new Quaternion(0, 180, 180, 0);
+        transform.localRotation = Quaternion.Euler(0, 20, 30);
         transform.localScale = new Vector3();
         transform.DORotate(new Vector3(), 1f);
         Tween myTween = transform.DOScale(new Vector3(1,1,1), 1f);
     }
 
     public YieldInstruction Disappear() {
-        transform.DORotate(new Vector3(0, 180, 180), 1f);
+        transform.DORotate(new Vector3(0, 20, 30), 1f);
         Tween myTween = transform.DOScale(new Vector3(), 1f);
         myTween.OnComplete(() => gameObject.SetActive(false));
         return myTween.WaitForCompletion();
@@ -57,15 +57,20 @@ public class FoodDish : MonoBehaviour
 
     public void Select() {
         Sequence seq = DOTween.Sequence();
-        //transform.DORotate(new Vector3(0, 0, 10), 1f);
-        seq.Append(transform.DOScale(0.9f, 0.2f));
-        seq.Append(transform.DOScale(1, 0.2f));
+        seq.Append(transform.DOScale(0.9f, 0.5f));
+        seq.Append(transform.DOScale(1, 0.5f));
     }
 
     public void SelectCorrect() {
         Sequence seq = DOTween.Sequence();
         seq.SetDelay(1);
         seq.Append(transform.DOLocalMoveX(0, 1));
+    }
+
+    public void Present() {
+        Sequence seq = DOTween.Sequence();
+        seq.SetDelay(1);
+        seq.Append(transform.DOLocalMoveX(-2.2f, 1));
     }
 
     public void Deselect() {
