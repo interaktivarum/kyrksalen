@@ -33,6 +33,7 @@ public class PickableItem : MonoBehaviour {
 
     private void OnEnable() {
         transform.localPosition = _initPos;
+        _draggable = true;
     }
 
     private void OnMouseDown() {

@@ -32,9 +32,8 @@ public class ViewStart : ViewBase
         _video.targetTexture.Release();
     }
 
-    public override YieldInstruction DoUnloadView() {
+    private void OnDisable() {
         _video.Stop();
-        return null;
     }
 
 }

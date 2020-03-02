@@ -9,10 +9,10 @@ def OCRSerial_folder(imgDir):
 	for imgFilename in os.listdir(imgDir):
 		OCRSerial_file(imgDir, imgFilename)
  
-def OCRSerial_file(imgDir,imgFilename):
+def OCRSerial_file(imgDir,folderTo,imgFilename):
 
 	# scriptDir = os.path.dirname(__file__)
-	folderTo = os.path.join(os.path.dirname(__file__),'OCR/');
+	#folderTo = os.path.join(os.path.dirname(os.path.abspath(__file__)),'OCR/');
 	imgPath = imgDir+imgFilename
 
 	if not os.path.exists(imgPath):
@@ -69,14 +69,14 @@ def show_image(img):
 	cv2.waitKey(0)
 
 if __name__ == '__main__':
-
-	imgDir = os.path.join(os.path.dirname(__file__),'Camera/');
-
-	if len(sys.argv) == 1:
-		OCRSerial_folder(imgDir)
-	if len(sys.argv) == 2:
-		OCRSerial_file(imgDir,sys.argv[1])
-
-	# filenameNew = OCRSerial(sys.argv)
-	# print(filenameNew)
+	#if len(sys.argv) == 1:
+	#	scriptDir = os.path.dirname(os.path.abspath(__file__))
+	#	imgDir = os.path.join(scriptDir,'Camera/');
+	#	OCRSerial_folder(imgDir)
+	#if len(sys.argv) == 2:
+	#	OCRSerial_folder(sys.argv[1])
+	#if len(sys.argv) == 3:
+	#	OCRSerial_file(sys.argv[1],sys.argv[2])
+	#if len(sys.argv) == 4:
+	OCRSerial_file(sys.argv[1],sys.argv[2],sys.argv[3])
 	

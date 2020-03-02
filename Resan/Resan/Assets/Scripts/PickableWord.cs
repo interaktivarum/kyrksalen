@@ -23,6 +23,7 @@ public class PickableWord : MonoBehaviour
 
     private void OnEnable() {
         transform.localPosition = _initPos;
+        _draggable = true;
     }
 
     // Update is called once per frame
