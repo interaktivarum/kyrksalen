@@ -36,7 +36,7 @@ public class LetterInput : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         LetterSphere ls = other.gameObject.GetComponent<LetterSphere>();
-        if (!_isOpen) {
+        if (!_isOpen && password.Length < 5) {
             if (ls) {
                 password += ls.GetComponentInChildren<TextMesh>().text;
                 Sequence seq = DOTween.Sequence();
@@ -45,12 +45,12 @@ public class LetterInput : MonoBehaviour
             }
             if (password.Length >= 5) {
                 InputFinished();
-                OpenCap();
+                //OpenCap();
             }
         }
     }
 
-    void OpenCap() {
+    public void OpenCap() {
         _isOpen = true;
         Sequence seq = DOTween.Sequence();
         seq.PrependInterval(3);

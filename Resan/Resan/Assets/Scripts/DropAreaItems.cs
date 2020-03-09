@@ -33,6 +33,7 @@ public class DropAreaItems : MonoBehaviour {
         _slots = new ItemSlot[nSlots];
         for (int i = 0; i < nSlots; i++) {
             _slots[i] = new ItemSlot();
+            _slots[i].id = i;
             _slots[i].position = CalcSlotPosition(i);
         }
     }
@@ -48,14 +49,86 @@ public class DropAreaItems : MonoBehaviour {
         return new Vector3(x, y, transform.position.z);
     }
 
-    public ItemSlot AddItem(PickableItem item) {
-        ItemSlot slot = GetClosestEmptySlot(item.transform.position);
-        if (slot != null) {
-            _view.SendStringToServer("ItemPacked:" + item.name);
-            slot.AddItem(item);
+    public List<ItemSlot> AddItem(PickableItem item) {
+        ItemSlot slot = GetClosestSlot(item.transform.position);
+        ItemSlot slotFit = CheckItemFit(slot, item);
+        if(slotFit == null) {
+            slotFit = CheckItemFit(GetEmptySlots(), item);
         }
-        _view.ItemPacked();
-        return slot;
+        if (slotFit != null) {
+            _view.SendStringToServer("ItemPacked:" + item.name);
+            List<ItemSlot> slots = AddItemToSlots(slotFit, item);
+            //slotFit.AddItem(item);
+            _view.OnItemPacked();
+            return slots;
+        }
+        return null;
+    }
+
+    ItemSlot CheckItemFit(ItemSlot slot, PickableItem item) {
+        Vector2 slotCoords = GetSlotCoordinates(slot);
+        //Debug.Log("Drop: " + slotCoords.x + "," + slotCoords.y);
+        for (int yItem = 0; yItem < item.dimensions.y; yItem++) {
+            for (int xItem = 0; xItem < item.dimensions.x; xItem++) {
+                Vector2 coords = slotCoords - new Vector2(xItem, yItem);
+                bool fits = CheckItemFit(coords, item);
+                //bool fits = CheckItemFit(slotCoords, item);
+                if (fits) {
+                    return GetSlot((int)coords.x, (int)coords.y);
+                }
+            }
+        }
+        return null;       
+    }
+
+    ItemSlot CheckItemFit(List<ItemSlot> slots, PickableItem item) {
+        foreach(ItemSlot slot in slots) {
+            bool fits = CheckItemFit(GetSlotCoordinates(slot), item);
+            //bool fits = CheckItemFit(slotCoords, item);
+            if (fits) {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+    bool CheckItemFit(Vector2 slotCoords, PickableItem item) {
+        for (int yItem = 0; yItem < item.dimensions.y; yItem++) {
+            for (int xItem = 0; xItem < item.dimensions.x; xItem++) {
+                int x = (int)slotCoords.x + xItem;
+                int y = (int)slotCoords.y + yItem;
+                //Debug.Log(x + "," + y + " [" + (cols * y + x) + "]: " + GetSlot(x,y).IsEmpty());
+                ItemSlot slot = GetSlot(x, y);
+                if (slot == null || !slot.IsEmpty()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    List<ItemSlot> AddItemToSlots(ItemSlot slot, PickableItem item) {
+        List<ItemSlot> slots = new List<ItemSlot>();
+        Vector2 slotCoords = GetSlotCoordinates(slot);
+        for (int yItem = 0; yItem < item.dimensions.y; yItem++) {
+            for (int xItem = 0; xItem < item.dimensions.x; xItem++) {
+                ItemSlot slotCovered = GetSlot((int)slotCoords.x + xItem, (int)slotCoords.y + yItem);
+                slotCovered.AddItem(item);
+                slots.Add(slotCovered);
+            }
+        }
+        return slots;
+    }
+
+    public ItemSlot GetSlot(int x, int y) {
+        if(x >= 0 && x < cols && y >= 0 && y < rows) {
+            return _slots[cols * y + x];
+        }
+        return null;
+    }
+
+    public Vector2 GetSlotCoordinates(ItemSlot slot) {
+        return new Vector2(slot.id % cols, Mathf.FloorToInt(slot.id / cols));
     }
 
     public void RemoveItem(PickableItem item) {
@@ -91,6 +164,28 @@ public class DropAreaItems : MonoBehaviour {
             }
         }
         return emptySlots;
+    }
+
+    public List<ItemSlot> GetAllSlots() {
+        List<ItemSlot> slots = new List<ItemSlot>();
+        foreach (ItemSlot slot in _slots) {
+            slots.Add(slot);
+        }
+        return slots;
+    }
+
+    public ItemSlot GetClosestSlot(Vector3 pos, bool empty = false) {
+        List<ItemSlot> slots = empty ? GetEmptySlots() : GetAllSlots();
+        float distMin = float.MaxValue;
+        ItemSlot slotMin = null;
+        foreach (ItemSlot slot in slots) {
+            float dist = Vector3.SqrMagnitude(pos - slot.position);
+            if (dist < distMin) {
+                distMin = dist;
+                slotMin = slot;
+            }
+        }
+        return slotMin;
     }
 
     public ItemSlot GetClosestEmptySlot(Vector3 pos) {

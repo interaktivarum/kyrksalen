@@ -80,7 +80,7 @@ public class Views : MonoBehaviour {
     }
 
     void UnloadCurrentView(string args) {
-        StartCoroutine(GetCurrentView().UnloadView());
+        GetCurrentView().InitUnloadView();
     }
 
     ViewBase GetCurrentView() {

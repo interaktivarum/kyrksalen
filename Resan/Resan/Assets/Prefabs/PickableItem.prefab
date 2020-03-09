@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8439329143387413802}
   - component: {fileID: 8439329143387413805}
-  - component: {fileID: 4552074869354525046}
   - component: {fileID: 9034426728926929834}
   m_Layer: 0
   m_Name: PickableItem
@@ -70,7 +69,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: e435f62e6d370b24285068d8a7ac880f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -82,19 +81,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!65 &4552074869354525046
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8439329143387413803}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 3, y: 5, z: 0.1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &9034426728926929834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,3 +94,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _packable: 1
+  dimensions: {x: 0, y: 0}

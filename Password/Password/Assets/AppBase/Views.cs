@@ -14,6 +14,13 @@ public class Views : MonoBehaviour {
     int _viewId = 0;
     bool _blockScreensaver;
     public Image _fadeImage;
+    Sequence _fadeSequence;
+
+    private void Awake() {
+        foreach (ViewBase view in GetComponentsInChildren<ViewBase>(true)) {
+            view.gameObject.SetActive(false);
+        }
+    }
 
     // Start is called before the first frame update
     void Start() {
@@ -23,6 +30,7 @@ public class Views : MonoBehaviour {
         _mh.AddCallback("UnloadView", UnloadCurrentView);
 
         SetReferences();
+        _fadeSequence = DOTween.Sequence();
 
         _fadeImage.color = Color.black;
         LoadView(0);
@@ -34,7 +42,7 @@ public class Views : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (Input.GetKeyDown(KeyCode.Space)) {
-            GetCurrentView().UnloadView();
+            UnloadCurrentView("");
         }
     }
 
@@ -47,6 +55,7 @@ public class Views : MonoBehaviour {
     }
 
     void FadeToView(int id) {
+        _fadeSequence.Kill();
         Sequence sequence = DOTween.Sequence();
         sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
             .OnComplete(() => LoadView(id)));
@@ -60,6 +69,7 @@ public class Views : MonoBehaviour {
     }
 
     void LoadCurrentView() {
+        _blockScreensaver = false;
         if (_viewId < transform.Find("Views").childCount) {
             foreach (ViewBase view in _views) {
                 view.gameObject.SetActive(false);
@@ -70,7 +80,7 @@ public class Views : MonoBehaviour {
     }
 
     void UnloadCurrentView(string args) {
-        GetCurrentView().UnloadView(args);
+        GetCurrentView().InitUnloadView();
     }
 
     ViewBase GetCurrentView() {
@@ -91,12 +101,17 @@ public class Views : MonoBehaviour {
         }
     }
 
-    public YieldInstruction FadeTo(Color color, int duration = 2) {
-        return _fadeImage.DOColor(color, duration).WaitForCompletion();
+    public YieldInstruction FadeTo(Color color, int duration = 2, int delay = 0) {
+        _fadeSequence.Kill();
+        _fadeSequence = DOTween.Sequence();
+        _fadeSequence.SetDelay(delay);
+        _fadeSequence.Append(_fadeImage.DOColor(color, duration));
+        return _fadeSequence.WaitForCompletion();
+        //return _fadeImage.DOColor(color, duration).WaitForCompletion();
     }
 
-    public YieldInstruction Dim() {
-        return FadeTo(new Color(0, 0, 0, 0.5f));
+    public YieldInstruction Dim(int duration = 2, int delay = 0) {
+        return FadeTo(new Color(0, 0, 0, 0.5f), duration, delay);
     }
 
     public YieldInstruction ResetFade() {
@@ -108,13 +123,15 @@ public class Views : MonoBehaviour {
     }
 
     public void Restart() {
-        _fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
-            .OnComplete(() => SceneManager.LoadScene(SceneManager.GetActiveScene().name));
+        _mh.SendStringToServer("App:Restart");
+        FadeToView(0);
+        /*_fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
+            .OnComplete(() => SceneManager.LoadScene(SceneManager.GetActiveScene().name));*/
     }
 
     public void RestartScreensaver() {
         if (!_blockScreensaver && !GetCurrentView().blockScreensaver) {
-            _mh.SendStringToServer("Restart:NoInteraction");
+            _mh.SendStringToServer("App:NoInteraction");
             Restart();
         }
     }

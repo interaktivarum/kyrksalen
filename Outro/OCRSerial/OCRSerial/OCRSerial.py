@@ -27,6 +27,7 @@ def OCRSerial_file(imgDir,folderTo,imgFilename):
 		os.remove(imgPath)
 		# Print error
 		print("Error: could not read serial number")
+		sys.exit(1)
 	else:
 		# Copy and rename file
 		split = imgFilename.split('.')
@@ -79,4 +80,5 @@ if __name__ == '__main__':
 	#	OCRSerial_file(sys.argv[1],sys.argv[2])
 	#if len(sys.argv) == 4:
 	OCRSerial_file(sys.argv[1],sys.argv[2],sys.argv[3])
+	sys.exit(0)
 	

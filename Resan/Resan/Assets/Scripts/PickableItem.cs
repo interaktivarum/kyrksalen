@@ -7,11 +7,13 @@ public class PickableItem : MonoBehaviour {
 
     Vector3 _initPos;
     public bool _packable;
+    public Vector2 dimensions;
 
     Vector3 _pickupPos;
     bool _draggable = true;
     //bool _correctDrop;
     DropAreaItems _dropArea;
+    DropAreaReject[] _rejectAreas;
     bool _hoveringDropArea;
 
     ViewPack _view;
@@ -25,6 +27,7 @@ public class PickableItem : MonoBehaviour {
         GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.9f, 0.9f);
         _dropArea = FindObjectOfType<DropAreaItems>();
         _view = GetComponentInParent<ViewPack>();
+        _rejectAreas = _view.GetComponentsInChildren<DropAreaReject>(true);
     }
 
     // Update is called once per frame
@@ -34,10 +37,17 @@ public class PickableItem : MonoBehaviour {
     private void OnEnable() {
         transform.localPosition = _initPos;
         _draggable = true;
+        SetBoxColliderBounds();
+        GetComponent<SpriteRenderer>().sortingOrder = 0;
+    }
+
+    void SetBoxColliderBounds () {
+        gameObject.GetComponent<BoxCollider>().size = gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size;
     }
 
     private void OnMouseDown() {
         SetDropAreaState(true);
+        PlaceOnTop();
         AreaPickupTest();
         _hoveringDropArea = false;
         GetComponent<SpriteRenderer>().sortingOrder += 1;
@@ -50,10 +60,12 @@ public class PickableItem : MonoBehaviour {
     }
 
     private void OnMouseUp() {
-        SetDropAreaState(false);
-        AreaDropTest();
+        if (!AreaDropTest()) {
+            RejectTest();
+        }
         GetComponent<SpriteRenderer>().sortingOrder -= 1;
         GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.9f, 0.9f);
+        SetDropAreaState(false);
     }
 
     private void OnMouseDrag() {
@@ -88,7 +100,8 @@ public class PickableItem : MonoBehaviour {
     public void EnterDropAreaTest(bool prev) {
 
         if (_hoveringDropArea && !prev) { //if enter drop area
-            Color c = _dropArea.HasFreeSlot() ? Color.green : Color.red;
+            //Color c = _dropArea.HasFreeSlot() ? Color.green : Color.red;
+            Color c = _packable ? Color.green : Color.red;
             GetComponent<SpriteRenderer>().color = c;
         }
         else if (prev && !_hoveringDropArea) { //if leave drop area
@@ -98,32 +111,64 @@ public class PickableItem : MonoBehaviour {
 
     void SetDropAreaState(bool state) {
         _dropArea.GetComponent<BoxCollider>().enabled = state;
+        foreach(DropAreaReject area in _rejectAreas) {
+            area.GetComponent<BoxCollider>().enabled = state;
+        }
     }
 
-    void AreaDropTest() {
+    bool AreaDropTest() {
         if (_hoveringDropArea) {
-            ItemSlot slot = _dropArea.AddItem(this);
-            if (slot != null) {
-                _view.SendStringToServer("ItemPacked:" + name);
-                MoveToSlot(slot);
+            bool packing = false;
+            if (_packable) {
+                List<ItemSlot> slots = _dropArea.AddItem(this);
+                if (slots != null && slots.Count > 0) {
+                    _view.SendStringToServer("ItemPacked:" + name);
+                    MoveToSlotsCenter(slots);
+                    packing = true;
+                }
             }
-            else {
-                _view.SendStringToServer("ItemRejected:" + name);
+            if (!packing) {
                 MoveToPickupPos();
             }
+            return true;
         }
+        return false;
+    }
+
+    bool RejectTest() {
+        RaycastHit[] hits = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition));
+        foreach (RaycastHit hit in hits) {
+            if (hit.transform.gameObject.GetComponent<DropAreaReject>()) {
+                MoveToInitPos();
+                return true;
+            }
+        }
+        return false;
     }
 
     void AreaPickupTest() {
         _dropArea.RemoveItem(this);
     }
 
-    void MoveToSlot(ItemSlot slot) {
-        transform.DOLocalMove(slot.position, 1);
+    void MoveToSlotsCenter(List<ItemSlot> slots) {
+        Vector3 center = new Vector3();
+        foreach(ItemSlot slot in slots) {
+            center += slot.position;
+        }
+        center /= slots.Count;
+        transform.DOLocalMove(center, 1);
     }
 
     void MoveToPickupPos() {
         transform.DOLocalMove(_pickupPos, 1);
+    }
+
+    void MoveToInitPos() {
+        transform.DOLocalMove(_initPos, 1);
+    }
+
+    void PlaceOnTop() {
+        GetComponent<SpriteRenderer>().sortingOrder = _view.NextSortingOrder();
     }
 
 }

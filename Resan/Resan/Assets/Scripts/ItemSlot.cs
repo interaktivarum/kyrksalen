@@ -5,8 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class ItemSlot
 {
-
-    public PickableItem item;
+    public int id;
+    public PickableItem item = null;
     public Vector3 position;
 
     // Start is called before the first frame update
@@ -27,6 +27,10 @@ public class ItemSlot
 
     public void RemoveItem() {
         item = null;
+    }
+
+    public bool IsEmpty() {
+        return item == null;
     }
 
 }

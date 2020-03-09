@@ -17,7 +17,11 @@ public class ViewBase : MonoBehaviour {
         _unloading = false;
     }
 
-    public IEnumerator UnloadView() {
+    public virtual void InitUnloadView() {
+        StartCoroutine(UnloadView());
+    }
+
+    IEnumerator UnloadView() {
         yield return DoUnloadView();
         _unloading = true;
         views.NextView();

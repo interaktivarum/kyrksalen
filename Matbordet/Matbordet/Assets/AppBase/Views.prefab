@@ -89,7 +89,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &4666566361972075778
 MonoBehaviour:
@@ -278,6 +278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f42b30dc5e156f147a4e25fa6e575204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _app: {fileID: 0}
   _mh: {fileID: 0}
   _views: []
   _fadeImage: {fileID: 5513836263946835685}

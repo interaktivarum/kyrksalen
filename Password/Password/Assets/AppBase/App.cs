@@ -7,13 +7,15 @@ public class App : MonoBehaviour
 
     public TCPMessageHandler _mh;
     public Views _views;
+    public FullScreenMode fsm = FullScreenMode.FullScreenWindow;
     float _timeLastInteraction;
 
     // Start is called before the first frame update
     void Start()
     {
+        Screen.fullScreenMode = fsm;
         Screen.fullScreen = true;
-        Screen.orientation = ScreenOrientation.AutoRotation;
+        //Screen.orientation = ScreenOrientation.AutoRotation;
 
         InteractionUpdate();
 
@@ -48,7 +50,7 @@ public class App : MonoBehaviour
 
     void QuitTest() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
-            _mh.SendStringToServer("ApplicationQuit");
+            _mh.SendStringToServer("App:Quit");
             Application.Quit();
         }
     }

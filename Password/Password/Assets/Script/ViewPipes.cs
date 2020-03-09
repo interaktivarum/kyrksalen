@@ -50,13 +50,16 @@ public class ViewPipes : ViewBase {
     public void InputFinished(string password) {
 
         if (PasswordCheck(password)) {
-            views._mh.SendStringToServer("CorrectPassword:" + password);
-            StartCoroutine(CorrectPassword());
+            AnimateSceneColors(Color.green);
+            views.BlockScreensaver();
+            views._mh.SendStringToServer("CorrectPassword:1");
+            //StartCoroutine(CorrectPassword());
         }
         else {
+            GetComponentInChildren<LetterInput>().OpenCap();
             AnimateSceneColors(Color.red);
             Help();
-            views._mh.SendStringToServer("IncorrectPassword:" + password);
+            views._mh.SendStringToServer("CorrectPassword:0");
         }
     }
 
@@ -100,13 +103,15 @@ public class ViewPipes : ViewBase {
         _pipes.ResetBlocks();
     }
 
-    IEnumerator CorrectPassword() {
+    /*IEnumerator CorrectPassword() {
         yield return AnimateSceneColors(Color.green);
-        UnloadView();
-    }
-
-    /*public override void UnloadView() {
-        base.UnloadView();
+        views.BlockScreensaver();
+        //InitUnloadView();
     }*/
+
+    public override YieldInstruction DoUnloadView() {
+        ResetSceneColors();
+        return null;
+    }
 
 }

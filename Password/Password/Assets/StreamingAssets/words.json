@@ -2,17 +2,18 @@
   "anagrams": [
     {
       "words": [
-        "panik",
-        "knipa",
-        "pinka"
+        "kista",
+        "sikta",
+        "skita"
+
       ],
       "extra": "lo"
     },
     {
       "words": [
-        "kista",
-        "sikta",
-        "skita"
+        "panik",
+        "knipa",
+        "pinka"
       ],
       "extra": "lo"
     },
@@ -22,7 +23,7 @@
         "vägar",
         "vägra"
       ],
-      "extra": "li"
+      "extra": "lo"
     }
   ]
 }

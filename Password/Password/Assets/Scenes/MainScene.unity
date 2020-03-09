@@ -367,7 +367,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6d9f7cf838fa11f47b45be10440dd828, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 551b1bed5e3f5cd43881c25c3d1bbb46, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -515,6 +515,32 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 78905783dcdd95541b144d9f01213883,
+        type: 3}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.7830189
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.47672343
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.1846743
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351543, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: delay
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b96f1d2975f5eff45ab14a72be308dd4, type: 3}
@@ -1545,6 +1571,32 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ffbabac609079954491e10ff32527efb,
+        type: 3}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.8584906
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.8584906
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.8584906
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351543, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: delay
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b96f1d2975f5eff45ab14a72be308dd4, type: 3}
 --- !u!1001 &1128205635
@@ -1720,6 +1772,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8833521506107310294, guid: 3c65abfe36a41304d856ff567ba20d3d,
+        type: 3}
+      propertyPath: fsm
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3924741097079595819, guid: 3c65abfe36a41304d856ff567ba20d3d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 3c65abfe36a41304d856ff567ba20d3d, type: 3}
@@ -1886,7 +1943,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6d9f7cf838fa11f47b45be10440dd828, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 551b1bed5e3f5cd43881c25c3d1bbb46, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2321,6 +2378,11 @@ PrefabInstance:
         type: 3}
       propertyPath: autoConnect
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576437747065960669, guid: 0b33611a0657b9248be875640a6b97a6,
+        type: 3}
+      propertyPath: keyConnect
+      value: 277
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b33611a0657b9248be875640a6b97a6, type: 3}
@@ -7221,7 +7283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   views: {fileID: 0}
-  blockScreensaver: 0
+  blockScreensaver: 1
   teamIdSelected: 0
 --- !u!1 &1924563904
 GameObject:
@@ -12336,6 +12398,27 @@ PrefabInstance:
     - target: {fileID: 3628376357229351542, guid: b96f1d2975f5eff45ab14a72be308dd4,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 9a0cd642d06fb564bbc00fd1e36a831d,
+        type: 3}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.71464837
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628376357229351432, guid: b96f1d2975f5eff45ab14a72be308dd4,
+        type: 3}
+      propertyPath: m_Color.b
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

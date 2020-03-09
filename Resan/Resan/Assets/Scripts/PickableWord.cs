@@ -42,8 +42,7 @@ public class PickableWord : MonoBehaviour
 
     private void OnMouseUp() {
         GetComponent<SpriteRenderer>().color = Color.white;
-        bool droppedInWordArea = AreaDropTest();
-        if (!droppedInWordArea) {
+        if (!AreaDropTest()) {
             RejectTest();
         }
     }
