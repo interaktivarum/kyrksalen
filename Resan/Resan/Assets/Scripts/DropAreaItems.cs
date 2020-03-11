@@ -42,10 +42,14 @@ public class DropAreaItems : MonoBehaviour {
         Bounds bounds = GetComponent<BoxCollider>().bounds;
         float w = bounds.size.x;
         float h = bounds.size.y;
+        float wSlot = w / cols;
+        float hSlot = h / rows;
         int col = id % cols;
         int row = Mathf.FloorToInt(id / cols);
-        float x = bounds.min.x + (col + 1) * w / (cols + 1);
-        float y = bounds.min.y + (row + 1) * h / (rows + 1);
+        //float x = bounds.min.x + (col + 1) * w / (cols + 1);
+        //float y = bounds.min.y + (row + 1) * h / (rows + 1);
+        float x = bounds.min.x + (col + 0.5f) * wSlot;
+        float y = bounds.min.y + (row + 0.5f) * hSlot;
         return new Vector3(x, y, transform.position.z);
     }
 

@@ -22,7 +22,7 @@ public class Instructions : MonoBehaviour
     }
 
     public Tween SetSpriteOpacity(int id, float opacity) {
-        return _sprites[id].DOColor(new Color(1, 1, 1, 1), opacity);
+        return _sprites[id].DOColor(new Color(1, 1, 1, opacity), 2);
     }
 
     public void HideSprites() {
@@ -33,8 +33,9 @@ public class Instructions : MonoBehaviour
 
     public void ShowTryAgain() {
         Sequence seq = DOTween.Sequence();
+        seq.Append(SetSpriteOpacity(0, 0));
         seq.Append(SetSpriteOpacity(1, 1));
-        seq.AppendInterval(2);
+        seq.AppendInterval(3);
         seq.Append(SetSpriteOpacity(1, 0));
         seq.Append(SetSpriteOpacity(0, 1));
     }

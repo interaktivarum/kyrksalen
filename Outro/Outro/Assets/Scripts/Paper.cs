@@ -48,16 +48,20 @@ public class Paper : MonoBehaviour
     public void SetImage(string folder, string filename) {
 
         Texture2D tex = LoadTexture(folder + filename);
-        _material.mainTexture = tex;
-        //_sprite.sprite = LoadSprite(folder + filename);
-        //transform.localScale = new Vector3(_sprite.bounds.size.x / _sprite.bounds.size.y, 1, 1);
+        Debug.Log(tex);
+        if (tex) {
+            _material.mainTexture = tex;
+            //_sprite.sprite = LoadSprite(folder + filename);
+            //transform.localScale = new Vector3(_sprite.bounds.size.x / _sprite.bounds.size.y, 1, 1);
 
-        //float ratio = _sprite.bounds.size.x / _sprite.bounds.size.y;
-        //_material.SetFloat("_Ratio", _sprite.bounds.size.x / _sprite.bounds.size.y);
-        _material.SetFloat("_Ratio", tex.width / tex.height);
+            //float ratio = _sprite.bounds.size.x / _sprite.bounds.size.y;
+            //_material.SetFloat("_Ratio", _sprite.bounds.size.x / _sprite.bounds.size.y);
+            Debug.Log(_material);
+            _material.SetFloat("_Ratio", tex.width / tex.height);
 
-        //_material.SetTextureScale("_MainTex", new Vector2(1 / ratio, 1));
-        //_material.SetTextureOffset("_MainTex", new Vector2((1 - (1 / ratio)) / 2, 0));
+            //_material.SetTextureScale("_MainTex", new Vector2(1 / ratio, 1));
+            //_material.SetTextureOffset("_MainTex", new Vector2((1 - (1 / ratio)) / 2, 0));
+        }
     }
 
     Texture2D LoadTexture(string filePath) {

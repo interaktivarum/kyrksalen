@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Threading.Tasks;
+using Unity.Collections;
+using Unity.Jobs;
 
 public class ViewImage : ViewBase
 {
@@ -9,8 +12,8 @@ public class ViewImage : ViewBase
     string pathImagesFrom = Application.streamingAssetsPath + "/OCRSerial/Camera/";
     string pathImagesTo = Application.streamingAssetsPath + "/OCRSerial/OCR/";
     Paper _paper;
-    string _errorStr = "Error";
     Instructions _instructions;
+    NativeArray<OCRResult> _ocrResult;
 
     private void Awake() {
         _paper = GetComponentInChildren<Paper>();
@@ -22,50 +25,37 @@ public class ViewImage : ViewBase
     {
         views._mh.AddCallback("ImageScanned", OnImageScanned);
         views._mh.AddCallback("UnloadImage", UnloadImage);
-        //OCRSerial("3.jpg");
-        //run_cmd("3.jpg");
-        //OCRImage("3_#123456789101112#.jpg");
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 
-    string run_cmd(string filename) {
-        System.Diagnostics.Process p = new System.Diagnostics.Process();
-        p.StartInfo.FileName = Application.streamingAssetsPath + "/OCRSerial/OCRSerial.exe";
-        p.StartInfo.Arguments = addQuotes(pathImagesFrom) + " " + addQuotes(pathImagesTo) + " " + filename;
-        p.StartInfo.UseShellExecute = false;
-        p.StartInfo.RedirectStandardOutput = true;
-        p.Start();
-        p.WaitForExit();
-        Debug.Log("Exit code: " + p.ExitCode);
-        return p.ExitCode == 0 ? p.StandardOutput.ReadToEnd() : _errorStr;
-    }
-
-    string addQuotes(string str) {
-        return "\"" + str + "\"";
+    async void RunOCRSerial(string filename) {
+        ProcessResult result = await OCRSerialTask.Execute(pathImagesFrom, pathImagesTo, filename);
+        Debug.Log(result.output);
+        OnImageOCRFinished(result, filename);
     }
 
     void OnImageScanned(string filename) {
-        string filenameNew = run_cmd(filename);
+        _paper.SetImage(pathImagesFrom, filename);
+        RunOCRSerial(filename);
+    }
+
+    void OnImageOCRFinished(ProcessResult result, string filename) {
         _instructions.HideSprites();
-        if(filenameNew != _errorStr) {
-            SendStringToServer("OCRSuccess:" + filenameNew);
-            OCRSuccesful(filename);
+        if (result.ExitCode == 0) {
+            SendStringToServer("OCRSuccess:" + result.output);
+            OCRSuccesful(result.output);
         }
         else {
-            SendStringToServer("OCRError:"+filename);
+            SendStringToServer("OCRError:" + filename);
             OCRError();
         }
     }
 
-
     void OCRSuccesful(string filename) {
-        _paper.SetImage(pathImagesTo, filename);
         _paper.Appear();
     }
 
