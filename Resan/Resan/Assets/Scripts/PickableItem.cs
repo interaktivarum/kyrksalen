@@ -9,10 +9,14 @@ public class PickableItem : MonoBehaviour {
     public bool _packable;
     public Vector2 dimensions;
 
+    //Sounds
+    public AudioClip[] sounds;
+    int _soundId;
+
     Vector3 _pickupPos;
     bool _draggable = true;
     //bool _correctDrop;
-    DropAreaItems _dropArea;
+    //DropAreaItems _dropArea;
     DropAreaReject[] _rejectAreas;
     bool _hoveringDropArea;
 
@@ -25,7 +29,7 @@ public class PickableItem : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.9f, 0.9f);
-        _dropArea = FindObjectOfType<DropAreaItems>();
+        //_dropArea = FindObjectOfType<DropAreaItems>();
         _view = GetComponentInParent<ViewPack>();
         _rejectAreas = _view.GetComponentsInChildren<DropAreaReject>(true);
     }
@@ -39,6 +43,7 @@ public class PickableItem : MonoBehaviour {
         _draggable = true;
         SetBoxColliderBounds();
         GetComponent<SpriteRenderer>().sortingOrder = 0;
+        GetComponent<BoxCollider>().enabled = true;
     }
 
     void SetBoxColliderBounds () {
@@ -87,7 +92,7 @@ public class PickableItem : MonoBehaviour {
         foreach (RaycastHit hit in hits) {
             _hoveringDropArea = hit.transform.gameObject.GetComponent<DropAreaItems>();
             if (_hoveringDropArea) {
-                pos += (_dropArea.transform.position - transform.position) / 8;
+                pos += (GetDropArea().transform.position - transform.position) / 8;
                 break;
             }
         }
@@ -110,7 +115,7 @@ public class PickableItem : MonoBehaviour {
     }
 
     void SetDropAreaState(bool state) {
-        _dropArea.GetComponent<BoxCollider>().enabled = state;
+        GetDropArea().GetComponent<BoxCollider>().enabled = state;
         foreach(DropAreaReject area in _rejectAreas) {
             area.GetComponent<BoxCollider>().enabled = state;
         }
@@ -118,9 +123,10 @@ public class PickableItem : MonoBehaviour {
 
     bool AreaDropTest() {
         if (_hoveringDropArea) {
+            PlaySound();
             bool packing = false;
             if (_packable) {
-                List<ItemSlot> slots = _dropArea.AddItem(this);
+                List<ItemSlot> slots = GetDropArea().AddItem(this);
                 if (slots != null && slots.Count > 0) {
                     _view.SendStringToServer("ItemPacked:" + name);
                     MoveToSlotsCenter(slots);
@@ -147,7 +153,7 @@ public class PickableItem : MonoBehaviour {
     }
 
     void AreaPickupTest() {
-        _dropArea.RemoveItem(this);
+        GetDropArea().RemoveItem(this);
     }
 
     void MoveToSlotsCenter(List<ItemSlot> slots) {
@@ -169,6 +175,17 @@ public class PickableItem : MonoBehaviour {
 
     void PlaceOnTop() {
         GetComponent<SpriteRenderer>().sortingOrder = _view.NextSortingOrder();
+    }
+
+    DropAreaItems GetDropArea() {
+        return _view.GetActiveDropArea();
+    }
+
+    void PlaySound() {
+        if(sounds.Length > 0) {
+            _view.PlaySound(sounds[_soundId]);
+            _soundId = (_soundId + 1) % sounds.Length;
+        }
     }
 
 }

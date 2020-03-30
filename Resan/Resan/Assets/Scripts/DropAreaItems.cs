@@ -8,27 +8,30 @@ public class DropAreaItems : MonoBehaviour {
     ViewPack _view;
 
     public int cols = 3;
-    public int rows = 2; 
+    public int rows = 2;
+    float _wSlot;
+    float _hSlot;
     //public List<PickableItem> items;
     public ItemSlot[] _slots;
 
     // Start is called before the first frame update
     void Start() {
         _view = GetComponentInParent<ViewPack>();
-        PopulateSlots();
+        //PopulateSlots();
     }
 
     private void OnEnable() {
         foreach (ItemSlot slot in _slots) {
             slot.RemoveItem();
         }
+        
     }
 
     // Update is called once per frame
     void Update() {
     }
 
-    void PopulateSlots() {
+    public void PopulateSlots() {
         int nSlots = GetNSlots();
         _slots = new ItemSlot[nSlots];
         for (int i = 0; i < nSlots; i++) {
@@ -42,19 +45,22 @@ public class DropAreaItems : MonoBehaviour {
         Bounds bounds = GetComponent<BoxCollider>().bounds;
         float w = bounds.size.x;
         float h = bounds.size.y;
-        float wSlot = w / cols;
-        float hSlot = h / rows;
+        _wSlot = w / cols;
+        _hSlot = h / rows;
         int col = id % cols;
         int row = Mathf.FloorToInt(id / cols);
         //float x = bounds.min.x + (col + 1) * w / (cols + 1);
         //float y = bounds.min.y + (row + 1) * h / (rows + 1);
-        float x = bounds.min.x + (col + 0.5f) * wSlot;
-        float y = bounds.min.y + (row + 0.5f) * hSlot;
+        float x = bounds.min.x + (col + 0.5f) * _wSlot;
+        float y = bounds.min.y + (row + 0.5f) * _hSlot;
         return new Vector3(x, y, transform.position.z);
     }
 
     public List<ItemSlot> AddItem(PickableItem item) {
-        ItemSlot slot = GetClosestSlot(item.transform.position);
+        Vector3 pos = item.transform.position;
+        pos.x -= (item.dimensions.x - 1) * _wSlot / 2;
+        pos.y -= (item.dimensions.y - 1) * _hSlot / 2;
+        ItemSlot slot = GetClosestSlot(pos);
         ItemSlot slotFit = CheckItemFit(slot, item);
         if(slotFit == null) {
             slotFit = CheckItemFit(GetEmptySlots(), item);
@@ -204,6 +210,12 @@ public class DropAreaItems : MonoBehaviour {
             }
         }
         return slotMin;
+    }
+
+    public void LockItems() {
+        foreach (ItemSlot slot in _slots) {
+            slot.item.GetComponent<BoxCollider>().enabled = false;
+        }
     }
 
 }

@@ -51,7 +51,7 @@ def ocr_serial_number(imgFilename):
 
 	# Crop image to contain serial number
 	h, w = img.shape[:2]
-	crop_img = img[h-150:h-0, w-750:w-250]
+	crop_img = img[h-150:h-0, w-1000:w]
 	# show_image(crop_img)
 
 	# Uncomment the line below to provide path to tesseract manually
@@ -60,7 +60,7 @@ def ocr_serial_number(imgFilename):
 	# Define config parameters.
 	# '-l eng'  for using the English language
 	# '--oem 1' for using LSTM OCR Engine
-	config = ('-l eng --oem 1 --psm 3')
+	config = ('-l eng --oem 1 --psm 3 -c tessedit_char_whitelist=#0123456789')
 
 	# Run tesseract OCR on cropped image
 	return pytesseract.image_to_string(crop_img, config=config)
@@ -70,15 +70,17 @@ def show_image(img):
 	cv2.waitKey(0)
 
 if __name__ == '__main__':
-	#if len(sys.argv) == 1:
-	#	scriptDir = os.path.dirname(os.path.abspath(__file__))
-	#	imgDir = os.path.join(scriptDir,'Camera/');
-	#	OCRSerial_folder(imgDir)
+	if len(sys.argv) == 2:
+		scriptDir = os.path.dirname(os.path.abspath(__file__))
+		fromDir = os.path.join(scriptDir,'Camera/');
+		toDir = os.path.join(scriptDir,'OCR/');
+		OCRSerial_file(fromDir,toDir,sys.argv[1])
+		# OCRSerial_folder(imgDir)
 	#if len(sys.argv) == 2:
 	#	OCRSerial_folder(sys.argv[1])
 	#if len(sys.argv) == 3:
 	#	OCRSerial_file(sys.argv[1],sys.argv[2])
-	#if len(sys.argv) == 4:
-	OCRSerial_file(sys.argv[1],sys.argv[2],sys.argv[3])
+	if len(sys.argv) == 4:
+		OCRSerial_file(sys.argv[1],sys.argv[2],sys.argv[3])
 	sys.exit(0)
 	

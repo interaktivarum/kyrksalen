@@ -10,6 +10,7 @@ public class ViewPipes : ViewBase {
     public WordHandler _wordHandler;
     public Image background;
     public Light globalLight;
+    int _wrongs;
 
     // Start is called before the first frame update
     void Start() {
@@ -26,6 +27,7 @@ public class ViewPipes : ViewBase {
     public override void LoadView() {
         base.LoadView();
         CreateLetters();
+        _wrongs = 0;
         Clear();
     }
 
@@ -73,10 +75,13 @@ public class ViewPipes : ViewBase {
     }
 
     void Help() {
-        Anagram anagram = _pipes.anagram;
-        bool removed = _pipes.RemoveExtraPipe();
-        if (!removed) {
-            _pipes.RearrangeToWord();
+        _wrongs++;
+        if (_wrongs % 2 == 0) {
+            Anagram anagram = _pipes.anagram;
+            bool removed = _pipes.RemoveExtraPipe();
+            if (!removed) {
+                _pipes.RearrangeToWord();
+            }
         }
     }
 
