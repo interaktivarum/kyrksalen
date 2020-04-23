@@ -12,10 +12,10 @@ public class ViewTeams : ViewBase
     // Start is called before the first frame update
     void Start()
     {
-        Sequence seq = DOTween.Sequence();
+        /*Sequence seq = DOTween.Sequence();
         seq.Append(GetComponentInChildren<Image>().DOColor(new Color(0.6f, 0.8f, 1), 10));
         seq.Append(GetComponentInChildren<Image>().DOColor(Color.white, 10));
-        seq.SetLoops(-1);
+        seq.SetLoops(-1);*/
     }
 
     // Update is called once per frame

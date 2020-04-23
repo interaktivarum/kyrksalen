@@ -9,6 +9,8 @@ public class ViewPipes : ViewBase {
     public LetterPipes _pipes;
     public WordHandler _wordHandler;
     public Image background;
+    public Image backgroundCorrect;
+    public Image backgroundIncorrect;
     public Light globalLight;
     int _wrongs;
 
@@ -53,13 +55,16 @@ public class ViewPipes : ViewBase {
 
         if (PasswordCheck(password)) {
             AnimateSceneColors(Color.green);
+            AnimateBackground(backgroundCorrect, 1);
             views.BlockScreensaver();
             views._mh.SendStringToServer("CorrectPassword:1");
             //StartCoroutine(CorrectPassword());
+            views.FadeTo(Color.black, 2, 4);
         }
         else {
             GetComponentInChildren<LetterInput>().OpenCap();
             AnimateSceneColors(Color.red);
+            AnimateBackground(backgroundIncorrect, 1);
             Help();
             views._mh.SendStringToServer("CorrectPassword:0");
         }
@@ -87,20 +92,28 @@ public class ViewPipes : ViewBase {
 
     YieldInstruction AnimateSceneColors(Color c) {
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(globalLight.DOIntensity(0, 2));
-        sequence.Append(globalLight.DOColor(c, 0));
-        sequence.Append(globalLight.DOIntensity(3, 2));
+        //sequence.Append(globalLight.DOIntensity(0, 2));
+        sequence.Append(globalLight.DOColor(c, 2));
+        //sequence.Append(globalLight.DOIntensity(3, 2));
+        return sequence.WaitForCompletion();
 
-        Sequence sequence2 = DOTween.Sequence();
+        /*Sequence sequence2 = DOTween.Sequence();
         sequence2.Append(background.DOColor(Color.gray, 2));
         sequence2.Append(background.DOColor(c, 2));
-        return sequence2.WaitForCompletion();
+        return sequence2.WaitForCompletion();*/
+    }
+
+    YieldInstruction AnimateBackground(Image image, float opacity) {
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(image.DOColor(new Color(1,1,1,opacity), 2));
+        return sequence.WaitForCompletion();
     }
 
     YieldInstruction ResetSceneColors() {
         Color c = new Color(0.3f, 0.4f, 1);
-        globalLight.DOColor(c, 2);
-        return background.DOColor(c, 2).WaitForCompletion();
+        AnimateBackground(backgroundCorrect, 0);
+        AnimateBackground(backgroundIncorrect, 0);
+        return globalLight.DOColor(c, 2).WaitForCompletion();
     }
 
     public void NewTry() {

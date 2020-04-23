@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class ViewIntroMovie : ViewBase
 {
@@ -10,6 +12,7 @@ public class ViewIntroMovie : ViewBase
     VideoPlayer _video;
     bool _started = false;
     bool _exitView = false;
+    public Image imageFade;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +33,13 @@ public class ViewIntroMovie : ViewBase
                 }
             }
         }
+
+        if (Input.GetMouseButtonDown(0)) {
+            if (Input.mousePosition.x < 200 && Input.mousePosition.y > 880) {
+                views.Restart();
+            }
+        }
+
     }
 
     public override void SetReferences() {
@@ -43,6 +53,7 @@ public class ViewIntroMovie : ViewBase
         _video.frame = 0;
         _started = false;
         _exitView = false;
+        FadeText();
     }
 
     public void FinishedPlaying() {
@@ -53,5 +64,12 @@ public class ViewIntroMovie : ViewBase
 
     private void OnDisable() {
         _video.Stop();
+    }
+
+    void FadeText() {
+        imageFade.color = Color.white;
+        Sequence seq = DOTween.Sequence();
+        seq.SetDelay(6);
+        seq.Append(imageFade.DOColor(new Color(1, 1, 1, 0),1));
     }
 }
