@@ -13,6 +13,7 @@ public class ViewIntroMovie : ViewBase
     bool _started = false;
     bool _exitView = false;
     public Image imageFade;
+    public Image imageBack;
 
     // Start is called before the first frame update
     void Start()
@@ -34,7 +35,7 @@ public class ViewIntroMovie : ViewBase
             }
         }
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && imageBack.color == Color.white) {
             if (Input.mousePosition.x < 200 && Input.mousePosition.y > 880) {
                 views.Restart();
             }
@@ -48,12 +49,14 @@ public class ViewIntroMovie : ViewBase
     }
 
     public override void LoadView() {
+        
         base.LoadView();
         _video.targetTexture.Release();
         _video.frame = 0;
         _started = false;
         _exitView = false;
-        FadeText();
+        FadeText(imageFade,6);
+        FadeText(imageBack, 15);
     }
 
     public void FinishedPlaying() {
@@ -66,10 +69,12 @@ public class ViewIntroMovie : ViewBase
         _video.Stop();
     }
 
-    void FadeText() {
-        imageFade.color = Color.white;
+    void FadeText(Image image, int delay) {
+        //DOTween.Kill(image.gameObject);
+        image.color = Color.white;
         Sequence seq = DOTween.Sequence();
-        seq.SetDelay(6);
-        seq.Append(imageFade.DOColor(new Color(1, 1, 1, 0),1));
+        seq.SetDelay(delay);
+        seq.Append(image.DOColor(new Color(1, 1, 1, 0),1));
+        AddSequence(seq);
     }
 }

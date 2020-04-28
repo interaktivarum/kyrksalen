@@ -2646,6 +2646,7 @@ MonoBehaviour:
   views: {fileID: 0}
   blockScreensaver: 1
   imageFade: {fileID: 220424481}
+  imageBack: {fileID: 295925652}
 --- !u!1001 &1045654761
 PrefabInstance:
   m_ObjectHideFlags: 0

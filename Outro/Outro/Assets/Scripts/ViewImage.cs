@@ -44,7 +44,8 @@ public class ViewImage : ViewBase
     }
 
     void OnImageOCRFinished(ProcessResult result, string filename) {
-        _instructions.HideSprites();
+        
+        Debug.Log(result.ExitCode);
         if (result.ExitCode == 0) {
             SendStringToServer("OCRSuccess:" + result.output);
             OCRSuccesful(result.output);
@@ -56,16 +57,19 @@ public class ViewImage : ViewBase
     }
 
     void OCRSuccesful(string filename) {
+        _instructions.HideSprites();
         _paper.Appear();
     }
 
      void OCRError() {
-        _instructions.ShowTryAgain();
+        Debug.Log("OCRError");
+        StartCoroutine(_instructions.ShowTryAgain());
     }
 
     void UnloadImage(string args) {
         _paper.Disappear();
-        _instructions.ShowScan();
+        StartCoroutine(_instructions.ShowSuccess());
+        //_instructions.ShowDefault();
     }
 
 }

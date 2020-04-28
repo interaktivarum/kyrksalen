@@ -2089,6 +2089,7 @@ MonoBehaviour:
   views: {fileID: 0}
   blockScreensaver: 1
   imageFade: {fileID: 163186887}
+  imageBack: {fileID: 270090034}
 --- !u!1 &1062913839
 GameObject:
   m_ObjectHideFlags: 0

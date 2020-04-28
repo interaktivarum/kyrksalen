@@ -54,7 +54,7 @@ public class Views : MonoBehaviour {
         }
     }
 
-    void FadeToView(int id) {
+    public void FadeToView(int id) {
         _fadeSequence.Kill();
         Sequence sequence = DOTween.Sequence();
         sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
@@ -124,7 +124,7 @@ public class Views : MonoBehaviour {
 
     public void Restart() {
         _mh.SendStringToServer("App:Restart");
-        FadeToView(0);
+        GetCurrentView().InitUnloadView(0);
         /*_fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
             .OnComplete(() => SceneManager.LoadScene(SceneManager.GetActiveScene().name));*/
     }

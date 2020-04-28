@@ -54,7 +54,7 @@ public class ViewPipes : ViewBase {
     public void InputFinished(string password) {
 
         if (PasswordCheck(password)) {
-            AnimateSceneColors(Color.green);
+            AnimateSceneColors(Color.green, 1);
             AnimateBackground(backgroundCorrect, 1);
             views.BlockScreensaver();
             views._mh.SendStringToServer("CorrectPassword:1");
@@ -63,7 +63,7 @@ public class ViewPipes : ViewBase {
         }
         else {
             GetComponentInChildren<LetterInput>().OpenCap();
-            AnimateSceneColors(Color.red);
+            AnimateSceneColors(Color.red, 2);
             AnimateBackground(backgroundIncorrect, 1);
             Help();
             views._mh.SendStringToServer("CorrectPassword:0");
@@ -90,10 +90,11 @@ public class ViewPipes : ViewBase {
         }
     }
 
-    YieldInstruction AnimateSceneColors(Color c) {
+    YieldInstruction AnimateSceneColors(Color c, int intensity) {
         Sequence sequence = DOTween.Sequence();
         //sequence.Append(globalLight.DOIntensity(0, 2));
         sequence.Append(globalLight.DOColor(c, 2));
+        globalLight.DOIntensity(intensity, 2);
         //sequence.Append(globalLight.DOIntensity(3, 2));
         return sequence.WaitForCompletion();
 
@@ -110,9 +111,10 @@ public class ViewPipes : ViewBase {
     }
 
     YieldInstruction ResetSceneColors() {
-        Color c = new Color(0.3f, 0.4f, 1);
+        Color c = new Color(0.0f, 0.33f, 1);
         AnimateBackground(backgroundCorrect, 0);
         AnimateBackground(backgroundIncorrect, 0);
+        globalLight.DOIntensity(1f, 2);
         return globalLight.DOColor(c, 2).WaitForCompletion();
     }
 

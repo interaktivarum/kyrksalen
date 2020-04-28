@@ -3200,6 +3200,7 @@ MonoBehaviour:
   views: {fileID: 0}
   blockScreensaver: 1
   imageFade: {fileID: 1653133374}
+  imageBack: {fileID: 2142492394}
 --- !u!4 &1868471268 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 82925030855963122, guid: 3adb12d08e78ae044a63052f55830c30,

@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class ViewBase : MonoBehaviour {
 
     public Views views;
     public bool blockScreensaver = false;
     protected bool _unloading = false;
+    protected List<Sequence> _sequences = new List<Sequence>();
 
     public virtual void SetReferences() {
         views = GetComponentInParent<Views>();
@@ -18,17 +20,38 @@ public class ViewBase : MonoBehaviour {
     }
 
     public virtual void InitUnloadView() {
-        StartCoroutine(UnloadView());
+        StartCoroutine(UnloadView(-1));
     }
 
-    IEnumerator UnloadView() {
+    public virtual void InitUnloadView(int idView) {
+        StartCoroutine(UnloadView(idView));
+    }
+
+    IEnumerator UnloadView(int idView) {
         yield return DoUnloadView();
+        KillSequences();
         _unloading = true;
-        views.NextView();
+        if(idView >= 0) {
+            views.FadeToView(idView);
+        }
+        else {
+            views.NextView();
+        }
     }
 
     public virtual YieldInstruction DoUnloadView() {
         return new YieldInstruction();
+    }
+
+    protected void AddSequence(Sequence seq) {
+        _sequences.Add(seq);
+    }
+
+    void KillSequences() {
+        foreach (Sequence seq in _sequences) {
+            seq.Kill();
+        }
+        _sequences.Clear();
     }
 
     public void SendMessageToServer(JsonMessage msg) {
