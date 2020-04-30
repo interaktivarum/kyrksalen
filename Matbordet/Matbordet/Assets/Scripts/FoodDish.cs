@@ -5,9 +5,6 @@ using DG.Tweening;
 
 public class FoodDish : MonoBehaviour
 {
-
-    public string dishName;
-    public string serverName;
     private Sprite _sprite;
     private Vector2 _bl;
     private Vector2 _ur;

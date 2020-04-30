@@ -37,6 +37,7 @@ public class ViewIntroMovie : ViewBase
 
         if (Input.GetMouseButtonDown(0) && imageBack.color == Color.white) {
             if (Input.mousePosition.x < 200 && Input.mousePosition.y > 880) {
+                _video.GetTargetAudioSource(0).DOFade(0, 2);
                 views.Restart();
             }
         }
@@ -57,6 +58,7 @@ public class ViewIntroMovie : ViewBase
         _exitView = false;
         FadeText(imageFade,6);
         FadeText(imageBack, 15);
+        _video.GetTargetAudioSource(0).volume = 1f;
     }
 
     public void FinishedPlaying() {

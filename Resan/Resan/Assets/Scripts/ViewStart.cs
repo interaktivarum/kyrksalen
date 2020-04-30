@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
+using DG.Tweening;
 
 public class ViewStart : ViewBase
 {
@@ -30,6 +31,12 @@ public class ViewStart : ViewBase
         _video.isLooping = true;
         _video.frame = 0;
         _video.targetTexture.Release();
+        _video.GetTargetAudioSource(0).volume = 0.5f;
+    }
+
+    public override void InitUnloadView() {
+        _video.GetTargetAudioSource(0).DOFade(0, 2);
+        base.InitUnloadView();
     }
 
     private void OnDisable() {

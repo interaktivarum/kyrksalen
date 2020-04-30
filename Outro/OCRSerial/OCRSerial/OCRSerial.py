@@ -2,6 +2,7 @@ import cv2
 import sys
 import pytesseract
 import os
+import re
 from shutil import move
 
 def OCRSerial_folder(imgDir):
@@ -19,40 +20,47 @@ def OCRSerial_file(imgDir,folderTo,imgFilename):
 		print('ERROR: Image file path does not exist: ' + imgPath)
 		sys.exit(1)
    
-	# Get serial number
-	serial = ocr_serial_number(imgPath)
-	serial = serial.replace(" ", "")
+	try:
+		# Get serial number
+		serial = ocr_serial_number(imgPath)
+		serial = serial.replace(" ", "")
 
-	if serial == "":
+		if serial == "":
+			os.remove(imgPath)
+			# Print error
+			print("Error: could not read serial number")
+			sys.exit(1)
+		else:
+			# Copy and rename file
+			split = imgFilename.split('.')
+			filenameNew = split[0]+'_'+serial+'.'+split[1]
+	
+			# Copy file to new folder
+			if not os.path.exists(folderTo):
+				os.makedirs(folderTo)
+			# os.rename(imgPath,folderTo+filenameNew)
+			move(imgPath, folderTo+filenameNew)
+	
+			# Print serial number
+			print(filenameNew)
+	except:
 		os.remove(imgPath)
-		# Print error
-		print("Error: could not read serial number")
 		sys.exit(1)
-	else:
-		# Copy and rename file
-		split = imgFilename.split('.')
-		filenameNew = split[0]+'_'+serial+'.'+split[1]
-
-		# Copy file to new folder
-		if not os.path.exists(folderTo):
-			os.makedirs(folderTo)
-		# os.rename(imgPath,folderTo+filenameNew)
-		move(imgPath, folderTo+filenameNew)
- 
-		# Print serial number
-		print(filenameNew)
 
 def ocr_serial_number(imgFilename):
 
 	# Read image from disk
 	img = cv2.imread(imgFilename, cv2.IMREAD_COLOR)
 
-	img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE);
+	
 
 	# Crop image to contain serial number
 	h, w = img.shape[:2]
-	crop_img = img[h-150:h-0, w-1000:w]
-	# show_image(crop_img)
+	crop_img = img[int(h/4):int(h/4+h/2), int(9*w/10):w]
+
+	rot_img = cv2.rotate(crop_img, cv2.ROTATE_90_CLOCKWISE);
+
+	show_image(rot_img)
 
 	# Uncomment the line below to provide path to tesseract manually
 	# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
@@ -60,10 +68,12 @@ def ocr_serial_number(imgFilename):
 	# Define config parameters.
 	# '-l eng'  for using the English language
 	# '--oem 1' for using LSTM OCR Engine
-	config = ('-l eng --oem 1 --psm 3 -c tessedit_char_whitelist=#0123456789')
+	config = ('-l eng --oem 1 --psm 3 -c tessedit_char_whitelist=#-0123456789')
 
 	# Run tesseract OCR on cropped image
-	return pytesseract.image_to_string(crop_img, config=config)
+	ocr = pytesseract.image_to_string(rot_img, config=config)
+	serial = "#" + re.search("#(.*?)#", ocr).group(1) + "#"
+	return serial
 
 def show_image(img):
 	cv2.imshow("cropped", img)

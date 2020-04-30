@@ -23,8 +23,9 @@ public class ViewImage : ViewBase
     // Start is called before the first frame update
     void Start()
     {
+        views._mh.AddCallback("ShutterRelease", OnShutterRelease);
         views._mh.AddCallback("ImageScanned", OnImageScanned);
-        views._mh.AddCallback("UnloadImage", UnloadImage);
+        views._mh.AddCallback("UnloadImage", UnloadImage); 
     }
 
     // Update is called once per frame
@@ -36,6 +37,10 @@ public class ViewImage : ViewBase
         ProcessResult result = await OCRSerialTask.Execute(pathImagesFrom, pathImagesTo, filename);
         Debug.Log(result.output);
         OnImageOCRFinished(result, filename);
+    }
+
+    void OnShutterRelease(string args) {
+        _instructions.HideSprites();
     }
 
     void OnImageScanned(string filename) {

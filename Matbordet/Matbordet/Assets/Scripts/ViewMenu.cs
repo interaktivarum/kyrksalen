@@ -7,7 +7,8 @@ using DG.Tweening;
 public class ViewMenu : ViewBase {
 
     public string serverName;
-    public FoodCourse[] courses;
+    //public FoodCourse[] courses;
+    public Profile profile;
     bool _lock;
     Image _bgText;
     //private int _courseId = 0;
@@ -38,18 +39,18 @@ public class ViewMenu : ViewBase {
     {
     }
 
-    void SetBackground(int id) {
+    /*void SetBackground(int id) {
         Transform t = GetComponentInChildren<Canvas>().transform;
         for (int i = 0; i < t.childCount; i++) {
             Image image = t.GetChild(i).GetComponent<Image>();
             image.gameObject.SetActive(i == id);
         }
-    }
+    }*/
 
     public void DishHit(FoodDish dish) {
         if (!IsLocked()) {
             int iC = 0;
-            foreach (FoodCourse c in courses) {
+            foreach (FoodCourse c in profile.courses) {
 
                 bool courseHasDish = false;
                 foreach (FoodDish d in c.dishes) {
@@ -70,9 +71,10 @@ public class ViewMenu : ViewBase {
                                     dish.SelectCorrect();
                                 } 
                             }
-                            /*else {
-                                //d.Select();
-                            }*/
+                            else {
+                                transform.Find("WrongSelection").position = new Vector3(0, d.transform.position.y, 0);
+                                transform.Find("WrongSelection").GetComponent<SpriteRenderer>().DOColor(new Color(1,1,1,1),0.5f);
+                            }
                             if (_mh.SendStringToServer("Dish" + iC + "Selected:" + iD)) {
                                 if (!AllCorrectSelected()) {
                                     Lock();
@@ -102,9 +104,12 @@ public class ViewMenu : ViewBase {
     }
 
     public override void LoadView() {
+        foreach (FoodDish d in GetComponentsInChildren<FoodDish>()) {
+            d.gameObject.SetActive(false);
+        }
         base.LoadView();
         Unlock("");
-        foreach (FoodCourse c in courses) {
+        foreach (FoodCourse c in profile.courses) {
             c.correctSelected = false;
             foreach (FoodDish d in c.dishes) {
                 d.gameObject.SetActive(true);
@@ -141,14 +146,16 @@ public class ViewMenu : ViewBase {
         }
     }*/
 
-    public void SetCourses(FoodCourse[] c) {
-        courses = c;
-        //_courseId = 0;
+    public void SetProfile(Profile p) {
+        profile = p;
+        transform.Find("WrongSelection").GetComponent<SpriteRenderer>().sprite = p.spriteWrongDish;
+        transform.GetComponentInChildren<Canvas>().transform.Find("Bg").GetComponent<Image>().sprite = p.spriteBg;
+        transform.GetComponentInChildren<Canvas>().transform.Find("BgCorrect").GetComponent<Image>().sprite = p.spriteBgCorrect;
     }
 
     bool AllCorrectSelected() {
         bool allCorrectSelected = true;
-        foreach (FoodCourse c in courses) {
+        foreach (FoodCourse c in profile.courses) {
             if (!c.correctSelected) {
                 allCorrectSelected = false;
             }
@@ -158,7 +165,7 @@ public class ViewMenu : ViewBase {
 
     void Present() {
         _lock = true;
-        foreach (FoodCourse c in courses) {
+        foreach (FoodCourse c in profile.courses) {
             c.correct.Present();
         }
         FadeBackground(1);// SetBackground(1);
@@ -184,6 +191,7 @@ public class ViewMenu : ViewBase {
         if (!AllCorrectSelected()) {
             views.ResetFade();
             _lock = false;
+            transform.Find("WrongSelection").GetComponent<SpriteRenderer>().DOColor(new Color(1, 1, 1, 0), 0.5f);
         }
     }
 

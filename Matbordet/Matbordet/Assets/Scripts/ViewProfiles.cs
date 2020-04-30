@@ -34,7 +34,7 @@ public class ViewProfiles : ViewBase
                     _selected = true;
                     p.Choose();
                     views.Dim(2, 2);
-                    viewMenu.GetComponent<ViewMenu>().SetCourses(p.courses);
+                    viewMenu.GetComponent<ViewMenu>().SetProfile(p);
                     _mh.SendStringToServer("ChildSelected:" + iP);
                     views.BlockScreensaver();
                 }

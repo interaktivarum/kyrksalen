@@ -13,6 +13,9 @@ public class Profile : MonoBehaviour {
     private Vector2 _br;
     private Vector2 _pixelSize;
     private Vector2 _scale;
+    public Sprite spriteBg;
+    public Sprite spriteBgCorrect;
+    public Sprite spriteWrongDish;
 
     private void Awake() {
         //SetSprite();

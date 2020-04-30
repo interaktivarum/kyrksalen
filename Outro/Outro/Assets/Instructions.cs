@@ -49,24 +49,22 @@ public class Instructions : MonoBehaviour
     }
 
     public IEnumerator ShowSuccess() {
-        _view.SendStringToServer("ShowText:Success");
-        yield return StartSequence(new SpriteRenderer[] { spriteSaved, spriteBox, spriteBring }, 1);
+        yield return StartSequence(new SpriteRenderer[] { spriteSaved, spriteBox, spriteBring }, 1, "Success");
         ShowDefault();
     }
 
     public IEnumerator ShowTryAgain() {
-        _view.SendStringToServer("ShowText:Error");
-        yield return StartSequence(new SpriteRenderer[] { spriteError, spriteRetry }, 2);
+        yield return StartSequence(new SpriteRenderer[] { spriteError, spriteRetry }, 1, "Error");
         ShowDefault();
     }
 
     public void ShowDefault() {
-        _view.SendStringToServer("ShowText:Default");
-        StartSequence(new SpriteRenderer[] { spriteDefault, spriteScan }, -1);
+        StartSequence(new SpriteRenderer[] { spriteDefault, spriteScan }, -1, "Default");
     }
 
-    public YieldInstruction StartSequence(SpriteRenderer[] sprites, int loops) {
+    public YieldInstruction StartSequence(SpriteRenderer[] sprites, int loops, string name) {
         HideSprites();
+        _view.SendStringToServer("ShowText:" + name);
         _seq = DOTween.Sequence();
         _seq.SetDelay(0.5f);
         foreach (SpriteRenderer sprite in sprites) {
