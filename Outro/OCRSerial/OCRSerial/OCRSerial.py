@@ -52,15 +52,13 @@ def ocr_serial_number(imgFilename):
 	# Read image from disk
 	img = cv2.imread(imgFilename, cv2.IMREAD_COLOR)
 
-	
-
 	# Crop image to contain serial number
 	h, w = img.shape[:2]
 	crop_img = img[int(h/4):int(h/4+h/2), int(9*w/10):w]
 
 	rot_img = cv2.rotate(crop_img, cv2.ROTATE_90_CLOCKWISE);
 
-	show_image(rot_img)
+	# show_image(rot_img)
 
 	# Uncomment the line below to provide path to tesseract manually
 	# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
