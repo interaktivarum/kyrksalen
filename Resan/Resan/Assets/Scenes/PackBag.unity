@@ -445,7 +445,7 @@ PrefabInstance:
         type: 3}
       propertyPath: sounds.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: 2d4e38bd58a21fb48a304c1b29500c79, type: 3}
+      objectReference: {fileID: 8300000, guid: 1d383a77d6f30f54aab4e811c14e701b, type: 3}
     - target: {fileID: 9034426728926929834, guid: 9e8f1a368ae53c748b0bac1f83ee15ee,
         type: 3}
       propertyPath: sounds.Array.data[1]
@@ -1534,7 +1534,7 @@ PrefabInstance:
         type: 3}
       propertyPath: sounds.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: 1d383a77d6f30f54aab4e811c14e701b, type: 3}
+      objectReference: {fileID: 8300000, guid: acef3d5a3595f1b49b4cc8e9089f2979, type: 3}
     - target: {fileID: 9034426728926929834, guid: 9e8f1a368ae53c748b0bac1f83ee15ee,
         type: 3}
       propertyPath: sounds.Array.data[1]
@@ -2327,7 +2327,7 @@ PrefabInstance:
         type: 3}
       propertyPath: sounds.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: 4ef9d5b43af4463429fceebcafd9820c, type: 3}
+      objectReference: {fileID: 8300000, guid: 2d4e38bd58a21fb48a304c1b29500c79, type: 3}
     - target: {fileID: 9034426728926929834, guid: 9e8f1a368ae53c748b0bac1f83ee15ee,
         type: 3}
       propertyPath: sounds.Array.data[1]
@@ -2553,11 +2553,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1331811156}
     m_Modifications:
-    - target: {fileID: 3235646089194809419, guid: 4c535c4c2d1f11d4989abdb44f5bbcaf,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2422511644241591817, guid: 4c535c4c2d1f11d4989abdb44f5bbcaf,
         type: 3}
       propertyPath: m_Name
@@ -2639,6 +2634,11 @@ PrefabInstance:
       propertyPath: m_TargetAudioSources.Array.data[0]
       value: 
       objectReference: {fileID: 330348771}
+    - target: {fileID: 3235646089194809419, guid: 4c535c4c2d1f11d4989abdb44f5bbcaf,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2422511643121447555, guid: 4c535c4c2d1f11d4989abdb44f5bbcaf,
         type: 3}
       propertyPath: m_IsActive
