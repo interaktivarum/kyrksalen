@@ -2579,7 +2579,7 @@ PrefabInstance:
     - target: {fileID: 7124965350013597401, guid: adb74c4fccf2c304489fd2eb0966ed94,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.5
+      value: 2.8
       objectReference: {fileID: 0}
     - target: {fileID: 2136111310312826209, guid: adb74c4fccf2c304489fd2eb0966ed94,
         type: 3}
@@ -2636,7 +2636,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1704508145
 Transform:
   m_ObjectHideFlags: 0
@@ -2999,7 +2999,7 @@ PrefabInstance:
     - target: {fileID: 7124965350013597401, guid: adb74c4fccf2c304489fd2eb0966ed94,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.5
+      value: -1.8
       objectReference: {fileID: 0}
     - target: {fileID: 7124965350013597401, guid: adb74c4fccf2c304489fd2eb0966ed94,
         type: 3}
@@ -3608,16 +3608,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 992545380}
     m_Modifications:
-    - target: {fileID: 3680100825877194082, guid: 290bbb6e6b8fa8040bb1d8d564c2406a,
-        type: 3}
-      propertyPath: m_Color.a
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7321023278379950485, guid: 290bbb6e6b8fa8040bb1d8d564c2406a,
-        type: 3}
-      propertyPath: m_Name
-      value: BgCorrect
-      objectReference: {fileID: 0}
     - target: {fileID: 5984925191262228138, guid: 290bbb6e6b8fa8040bb1d8d564c2406a,
         type: 3}
       propertyPath: m_Name
@@ -3702,6 +3692,16 @@ PrefabInstance:
         type: 3}
       propertyPath: serverName
       value: MenuSelect
+      objectReference: {fileID: 0}
+    - target: {fileID: 3680100825877194082, guid: 290bbb6e6b8fa8040bb1d8d564c2406a,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7321023278379950485, guid: 290bbb6e6b8fa8040bb1d8d564c2406a,
+        type: 3}
+      propertyPath: m_Name
+      value: BgCorrect
       objectReference: {fileID: 0}
     - target: {fileID: 4515716097932972048, guid: 290bbb6e6b8fa8040bb1d8d564c2406a,
         type: 3}
@@ -3820,7 +3820,7 @@ PrefabInstance:
     - target: {fileID: 7143397746404454480, guid: ce499c4cae289d7408889502a39b1327,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7143397746404454483, guid: ce499c4cae289d7408889502a39b1327,
         type: 3}
