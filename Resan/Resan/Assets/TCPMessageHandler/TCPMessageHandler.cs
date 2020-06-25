@@ -99,7 +99,9 @@ public class TCPMessageHandler : MonoBehaviour
             }
             else {
                 _ClientMessageSelfEvent.Invoke("Handler: Ping server");
-                SendStringToServer(settings.ping);
+                if (settings.ping.Length > 0) {
+                    SendStringToServer(settings.ping);
+                }
             }
             yield return new WaitForSeconds(10);
         }

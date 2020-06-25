@@ -170,7 +170,13 @@ public class Client : MonoBehaviour {
             foreach(string msg in msgs) {
                 string msgTrim = msg.Trim(_messageHandler.appendString);
                 msgTrim = msgTrim.Trim(_messageHandler.prependString);
-                _messageHandler.RunCallbackStrId(msgTrim, null);
+
+                //Separate callback function and arguments
+                string[] split = msgTrim.Split(':');
+                string str = split[0];
+                string args = split.Length > 1 ? split[1] : null;
+                _messageHandler.RunCallbackStrId(str, args);
+
                 _messageHandler._ClientStringReceivedEvent.Invoke(msg);
             }
             

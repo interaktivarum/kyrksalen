@@ -99,7 +99,9 @@ public class TCPMessageHandler : MonoBehaviour
             }
             else {
                 _ClientMessageSelfEvent.Invoke("Handler: Ping server");
-                SendStringToServer(settings.ping);
+                if (settings.ping.Length > 0) {
+                    SendStringToServer(settings.ping);
+                }
             }
             yield return new WaitForSeconds(10);
         }
@@ -180,15 +182,23 @@ public class TCPMessageHandler : MonoBehaviour
         SendMessageToServer(msg);
     }
 
-    public void SendMessageToServer(JsonMessage msg) {
+    public bool SendMessageToServer(JsonMessage msg) {
         if (_client.IsConnected()) {
             _client.SendMessageToServer(msg);
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
-    public void SendStringToServer(string str) {
+    public bool SendStringToServer(string str) {
         if (_client.IsConnected()) {
             _client.SendStringToServer((prependString + str + appendString).Trim());
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
