@@ -69,7 +69,6 @@ public class DropAreaItems : MonoBehaviour {
             _view.SendStringToServer("ItemPacked:" + item.name);
             List<ItemSlot> slots = AddItemToSlots(slotFit, item);
             //slotFit.AddItem(item);
-            _view.OnItemPacked();
             return slots;
         }
         return null;
@@ -109,7 +108,7 @@ public class DropAreaItems : MonoBehaviour {
                 int y = (int)slotCoords.y + yItem;
                 //Debug.Log(x + "," + y + " [" + (cols * y + x) + "]: " + GetSlot(x,y).IsEmpty());
                 ItemSlot slot = GetSlot(x, y);
-                if (slot == null || !slot.IsEmpty()) {
+                if (slot == null/* || !slot.IsEmpty()*/) {
                     return false;
                 }
             }

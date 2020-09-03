@@ -5,10 +5,12 @@ using UnityEngine;
 public class ViewPack : ViewBase
 {
     DropAreaItems[] _dropAreas;
+    PickableItem[] _items;
     public int _dropAreaId;
     DropAreaItems _dropArea;
     int _sortingOrder = 0;
     AudioSource _audioSource;
+    public int _maxItems;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +21,7 @@ public class ViewPack : ViewBase
         base.SetReferences();
         _audioSource = GetComponent<AudioSource>();
         _dropAreas = GetComponentsInChildren<DropAreaItems>(true);
+        _items = GetComponentsInChildren<PickableItem>(true);
         foreach (DropAreaItems area in _dropAreas) {
             area.PopulateSlots();
         }
@@ -39,17 +42,38 @@ public class ViewPack : ViewBase
     { 
     }
 
+    public void OnItemDropped() {
+        /*int nPacked = 0;
+        foreach(PickableItem item in _items) {
+            if (item._packed) {
+                nPacked++;
+            }
+        }
+        Debug.Log(nPacked);*/
+    }
+
     public void OnItemPacked() {
-        if (!GetActiveDropArea().HasFreeSlot()) {
-            GetActiveDropArea().gameObject.SetActive(false);
-            GetActiveDropArea().LockItems();
-            if (_dropAreaId < _dropAreas.Length - 1) {
-                ActivateNextLayer();
+        /* if (!GetActiveDropArea().HasFreeSlot()) {
+             GetActiveDropArea().gameObject.SetActive(false);
+             GetActiveDropArea().LockItems();
+             if (_dropAreaId < _dropAreas.Length - 1) {
+                 ActivateNextLayer();
+             }
+             else {
+                 SendStringToServer("AllItemsPacked:1");
+                 InitUnloadView();
+             }
+         }*/
+        int nPacked = 0;
+        foreach (PickableItem item in _items) {
+            if (item._packed) {
+                nPacked++;
             }
-            else {
-                SendStringToServer("AllItemsPacked:1");
-                InitUnloadView();
-            }
+        }
+        if(nPacked >= _maxItems) {
+            SendStringToServer("AllItemsPacked:1");
+            InitUnloadView();
+            LockItems();
         }
     }
 
@@ -74,6 +98,12 @@ public class ViewPack : ViewBase
     public void PlaySound(AudioClip clip) {
         _audioSource.clip = clip;
         _audioSource.Play();
+    }
+
+    void LockItems() {
+        foreach (PickableItem item in _items) {
+            item.GetComponent<BoxCollider>().enabled = false;
+        }
     }
 
 }

@@ -2564,6 +2564,7 @@ MonoBehaviour:
   views: {fileID: 0}
   blockScreensaver: 0
   _dropAreaId: 0
+  _maxItems: 5
 --- !u!82 &1277573014
 AudioSource:
   m_ObjectHideFlags: 0

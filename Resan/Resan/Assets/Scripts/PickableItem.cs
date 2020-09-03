@@ -8,6 +8,7 @@ public class PickableItem : MonoBehaviour {
     Vector3 _initPos;
     public bool _packable;
     public Vector2 dimensions;
+    public bool _packed;
 
     //Sounds
     public AudioClip[] sounds;
@@ -44,6 +45,8 @@ public class PickableItem : MonoBehaviour {
         SetBoxColliderBounds();
         GetComponent<SpriteRenderer>().sortingOrder = 0;
         GetComponent<BoxCollider>().enabled = true;
+        // GetComponent<BoxCollider>().center = new Vector3();
+        _packed = false;
     }
 
     void SetBoxColliderBounds () {
@@ -53,9 +56,10 @@ public class PickableItem : MonoBehaviour {
     private void OnMouseDown() {
         SetDropAreaState(true);
         PlaceOnTop();
+        _packed = false;
         AreaPickupTest();
         _hoveringDropArea = false;
-        GetComponent<SpriteRenderer>().sortingOrder += 1;
+        //GetComponent<SpriteRenderer>().sortingOrder += 1;
 
         if (_draggable) {
             _pickupPos = transform.localPosition;
@@ -68,7 +72,8 @@ public class PickableItem : MonoBehaviour {
         if (!AreaDropTest()) {
             RejectTest();
         }
-        GetComponent<SpriteRenderer>().sortingOrder -= 1;
+        _view.OnItemDropped();
+        //GetComponent<SpriteRenderer>().sortingOrder -= 1;
         GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.9f, 0.9f);
         SetDropAreaState(false);
     }
@@ -98,6 +103,7 @@ public class PickableItem : MonoBehaviour {
         }
         EnterDropAreaTest(hoverDropAreaPrev);
 
+        pos.z = transform.position.z;
         transform.DOLocalMove(pos, 0.25f);
 
     }
@@ -131,6 +137,8 @@ public class PickableItem : MonoBehaviour {
                     _view.SendStringToServer("ItemPacked:" + name);
                     MoveToSlotsCenter(slots);
                     packing = true;
+                    _packed = true;
+                    _view.OnItemPacked();
                 }
             }
             if (!packing) {
@@ -162,6 +170,7 @@ public class PickableItem : MonoBehaviour {
             center += slot.position;
         }
         center /= slots.Count;
+        center.z = -GetComponent<SpriteRenderer>().sortingOrder / 10000f;
         transform.DOLocalMove(center, 1);
     }
 
