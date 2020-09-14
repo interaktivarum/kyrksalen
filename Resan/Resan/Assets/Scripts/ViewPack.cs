@@ -7,7 +7,6 @@ public class ViewPack : ViewBase
     DropAreaItems[] _dropAreas;
     PickableItem[] _items;
     public int _dropAreaId;
-    DropAreaItems _dropArea;
     int _sortingOrder = 0;
     AudioSource _audioSource;
     public int _maxItems;
@@ -40,16 +39,6 @@ public class ViewPack : ViewBase
     // Update is called once per frame
     void Update()
     { 
-    }
-
-    public void OnItemDropped() {
-        /*int nPacked = 0;
-        foreach(PickableItem item in _items) {
-            if (item._packed) {
-                nPacked++;
-            }
-        }
-        Debug.Log(nPacked);*/
     }
 
     public void OnItemPacked() {

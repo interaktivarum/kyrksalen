@@ -72,7 +72,6 @@ public class PickableItem : MonoBehaviour {
         if (!AreaDropTest()) {
             RejectTest();
         }
-        _view.OnItemDropped();
         //GetComponent<SpriteRenderer>().sortingOrder -= 1;
         GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.9f, 0.9f);
         SetDropAreaState(false);
@@ -169,7 +168,9 @@ public class PickableItem : MonoBehaviour {
         foreach(ItemSlot slot in slots) {
             center += slot.position;
         }
-        center /= slots.Count;
+        center.y += _view.GetActiveDropArea().transform.position.y; //Move closer to center
+        center.x /= slots.Count;
+        center.y /= slots.Count + 1;
         center.z = -GetComponent<SpriteRenderer>().sortingOrder / 10000f;
         transform.DOLocalMove(center, 1);
     }
