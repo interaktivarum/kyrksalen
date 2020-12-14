@@ -9,15 +9,19 @@ using DG.Tweening;
 public class ViewIntroMovie : ViewBase
 {
 
-    VideoPlayer _video;
+    public VideoPlayer _video;
+    public VideoPlayer _videoSub;
+    public RawImage _imageSub;
     bool _started = false;
     bool _exitView = false;
     public Image imageFade;
     public Image imageBack;
+    public VideoClip[] subtitles;
 
     // Start is called before the first frame update
     void Start()
     {
+        
     }
 
     // Update is called once per frame
@@ -46,7 +50,7 @@ public class ViewIntroMovie : ViewBase
 
     public override void SetReferences() {
         base.SetReferences();
-        _video = GetComponentInChildren<VideoPlayer>();
+        //_video = GetComponentInChildren<VideoPlayer>();
     }
 
     public override void LoadView() {
@@ -54,11 +58,30 @@ public class ViewIntroMovie : ViewBase
         base.LoadView();
         _video.targetTexture.Release();
         _video.frame = 0;
+        
+        SetSubtitles();
         _started = false;
         _exitView = false;
         FadeText(imageFade,6);
         FadeText(imageBack, 15);
         _video.GetTargetAudioSource(0).volume = 1f;
+        GetComponentInChildren<Canvas>().sortingOrder = 10;
+    }
+
+    public void SetSubtitles() {
+        _imageSub.enabled = false;
+        _videoSub.targetTexture.Release();
+        SetSubtitles(views._app.GetComponentInChildren<SubtitlesHandler>().language);
+    }
+
+    public void SetSubtitles(int id) {
+        _videoSub.Stop();
+        if (id >= 0) {
+            _imageSub.enabled = true;
+            _videoSub.clip = subtitles[id];
+            _videoSub.Play();
+            _videoSub.time = _video.time;
+        }
     }
 
     public void FinishedPlaying() {
@@ -69,6 +92,7 @@ public class ViewIntroMovie : ViewBase
 
     private void OnDisable() {
         _video.Stop();
+        GetComponentInChildren<Canvas>().sortingOrder = 0;
     }
 
     void FadeText(Image image, int delay) {

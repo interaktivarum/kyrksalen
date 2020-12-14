@@ -14,6 +14,7 @@ public class ViewProfiles : ViewBase
 
     private void Awake() {
         gameObject.SetActive(false);
+        fadeDurationView = 1;
     }
 
     // Start is called before the first frame update
@@ -64,7 +65,7 @@ public class ViewProfiles : ViewBase
         YieldInstruction yi = null;
         foreach (Profile p in profiles) {
             if (p.gameObject.activeSelf) {
-                yi = p.Disappear();
+                //yi = p.Disappear();
             }
         }
         return yi; //Note! Only the last animation counts

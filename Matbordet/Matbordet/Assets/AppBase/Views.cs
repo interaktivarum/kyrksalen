@@ -55,11 +55,12 @@ public class Views : MonoBehaviour {
     }
 
     public void FadeToView(int id) {
+        Debug.Log(GetCurrentView().fadeDurationView);
         _fadeSequence.Kill();
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 1), 2)
+        sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 1), GetCurrentView().fadeDurationView)
             .OnComplete(() => LoadView(id)));
-        sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 0), 2));
+        sequence.Append(_fadeImage.DOColor(new Color(0, 0, 0, 0), GetCurrentView().fadeDurationView));
     }
 
     void LoadView(int id) {

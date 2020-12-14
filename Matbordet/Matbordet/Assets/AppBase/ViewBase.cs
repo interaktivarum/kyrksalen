@@ -9,6 +9,7 @@ public class ViewBase : MonoBehaviour {
     public bool blockScreensaver = false;
     protected bool _unloading = false;
     protected List<Sequence> _sequences = new List<Sequence>();
+    public float fadeDurationView = 2f;
 
     public virtual void SetReferences() {
         views = GetComponentInParent<Views>();
