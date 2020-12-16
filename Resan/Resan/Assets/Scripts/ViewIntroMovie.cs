@@ -50,7 +50,7 @@ public class ViewIntroMovie : ViewBase
 
     public override void SetReferences() {
         base.SetReferences();
-        //_video = GetComponentInChildren<VideoPlayer>();
+        _video = GetComponentInChildren<VideoPlayer>();
     }
 
     public override void LoadView() {
@@ -59,16 +59,16 @@ public class ViewIntroMovie : ViewBase
         _video.targetTexture.Release();
         _video.frame = 0;
         
-        SetSubtitles();
+        //SetSubtitles();
         _started = false;
         _exitView = false;
         FadeText(imageFade,6);
         FadeText(imageBack, 15);
         _video.GetTargetAudioSource(0).volume = 1f;
-        GetComponentInChildren<Canvas>().sortingOrder = 10;
+        //GetComponentInChildren<Canvas>().sortingOrder = 10;
     }
 
-    public void SetSubtitles() {
+    /*public void SetSubtitles() {
         _imageSub.enabled = false;
         _videoSub.targetTexture.Release();
         SetSubtitles(views._app.GetComponentInChildren<SubtitlesHandler>().language);
@@ -82,7 +82,7 @@ public class ViewIntroMovie : ViewBase
             _videoSub.Play();
             _videoSub.time = _video.time;
         }
-    }
+    }*/
 
     public void FinishedPlaying() {
         _exitView = true;
@@ -92,7 +92,7 @@ public class ViewIntroMovie : ViewBase
 
     private void OnDisable() {
         _video.Stop();
-        GetComponentInChildren<Canvas>().sortingOrder = 0;
+        //GetComponentInChildren<Canvas>().sortingOrder = 0;
     }
 
     void FadeText(Image image, int delay) {

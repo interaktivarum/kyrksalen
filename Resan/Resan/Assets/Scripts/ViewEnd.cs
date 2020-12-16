@@ -9,7 +9,7 @@ public class ViewEnd : ViewBase
 {
 
     public VideoPlayer _video;
-    public VideoPlayer _videoSub;
+    //public VideoPlayer _videoSub;
     public RawImage _imageSub;
     bool _started = false;
     bool _exitView = false;
@@ -38,22 +38,21 @@ public class ViewEnd : ViewBase
 
     public override void SetReferences() {
         base.SetReferences();
+        _video = GetComponentInChildren<VideoPlayer>();
     }
 
     public override void LoadView() {
         base.LoadView();
         _video.targetTexture.Release();
         _video.frame = 0;
-        _videoSub.targetTexture.Release();
-        SetSubtitles();
-        _videoSub.targetTexture.Release();
-        SetSubtitles();
+        //_videoSub.targetTexture.Release();
+        //SetSubtitles();
         _started = false;
         _exitView = false;
-        GetComponentInChildren<Canvas>().sortingOrder = 10;
+        //GetComponentInChildren<Canvas>().sortingOrder = 10;
     }
 
-    public void SetSubtitles() {
+    /*public void SetSubtitles() {
         _imageSub.enabled = false;
         SetSubtitles(views._app.GetComponentInChildren<SubtitlesHandler>().language);
     }
@@ -66,7 +65,7 @@ public class ViewEnd : ViewBase
             _videoSub.Play();
             _videoSub.time = _video.time;
         }
-    }
+    }*/
 
     public void FinishedPlaying() {
         _exitView = true;
@@ -76,7 +75,7 @@ public class ViewEnd : ViewBase
 
     private void OnDisable() {
         _video.Stop();
-        GetComponentInChildren<Canvas>().sortingOrder = 0;
+        //GetComponentInChildren<Canvas>().sortingOrder = 0;
     }
 
 }

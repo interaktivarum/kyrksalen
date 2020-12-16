@@ -31,9 +31,10 @@ public class ViewStart : ViewBase
         _video.isLooping = true;
         _video.frame = 0;
         _video.targetTexture.Release();
+        _video.GetTargetAudioSource(0).volume = 0.5f;
         //_video.GetTargetAudioSource(0).volume = 0.5f;
-        views._app.GetComponentInChildren<SubtitlesHandler>().language = -1;
-        GetComponentInChildren<Canvas>().sortingOrder = 10;
+        GetComponentInChildren<Subtitles>().SetSubtitles(0);
+        //GetComponentInChildren<Canvas>().sortingOrder = 10;
     }
 
     public override void InitUnloadView() {
@@ -42,8 +43,10 @@ public class ViewStart : ViewBase
     }
 
     private void OnDisable() {
-        _video.Stop();
-        GetComponentInChildren<Canvas>().sortingOrder = 0;
+        if (_video) {
+            _video.Stop();
+        }
+        //GetComponentInChildren<Canvas>().sortingOrder = 0;
     }
 
 }
