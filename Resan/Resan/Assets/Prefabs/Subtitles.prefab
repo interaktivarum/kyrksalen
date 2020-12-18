@@ -146,8 +146,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flags:
-  - {fileID: 21300000, guid: 0f807d7b1ba673c4b8fee8826eea2590, type: 3}
-  - {fileID: 21300000, guid: 4b66fb8cc9a82754dbc9974f6b575c30, type: 3}
+  - {fileID: 21300000, guid: d0d927a71621004448020c5715c9d9c8, type: 3}
+  - {fileID: 21300000, guid: 3394a2db78ba1284a85139f9d638cb8e, type: 3}
   subtitles:
   - {fileID: 32900000, guid: 1f6d809cbfe5bcf43bebc5d29890edff, type: 3}
   - {fileID: 32900000, guid: f4e0458744054ae4aae421360d535a37, type: 3}
